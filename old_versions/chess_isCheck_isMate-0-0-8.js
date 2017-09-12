@@ -1,10 +1,13 @@
 var tiledBoard = require('./chessBoard.js')
 var tBoard3x3 = tiledBoard.buildIt3x3
 console.log(  tBoard3x3);
+console.log(  fullSet)
 
 var standard = require('./chessPieces.js')
 var fullSet = pieces = standard.pieces
-console.log( fullSet)
+fullSet.splice(fullSet.findIndex(p=>p.piece=='testRook'),1)
+console.log(  fullSet)
+//console.log( fullSet)
 /*  
 var pieces=
 [ { piece: 'king', owner: 1, x: 4, y: 0 },
