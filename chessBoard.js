@@ -14,7 +14,7 @@ let build = function (){
   }
   return board.map(r=>r.join(''))
 }
-console.log(  build())
+//console.log(  build())
 
 //build a mockup with 3x3 tiles 
 let build3by3 = function (){
@@ -35,4 +35,8 @@ let build3by3 = function (){
   return board.map(r=>r.join(''))
 
 }
-console.log( build3by3())
+module.exports = {
+  buildIt : build(),
+  buildIt3x3 : build3by3()
+}
+//console.log( build3by3())
