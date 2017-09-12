@@ -16,6 +16,9 @@ or download the chessjs folder. You can then open the
 latest version in a browser or run the latest version 
 from the command line with NodeJs vel. sim.
 
+If you are running it in a browser, the only output will be 
+in the javascript console. 
+
 the current default piece set is saved under chessPieces.js
 
 
