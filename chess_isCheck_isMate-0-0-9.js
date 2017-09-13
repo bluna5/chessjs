@@ -1,13 +1,58 @@
+process.stdin.resume()
+process.stdin.setEncoding('utf8')
+var util = require('util')
+
+process.stdin.on('data', function(text){
+  //console.log(  'received data', util.inspect(text))
+    if (/quit\n|exit\n/i.test(text)){
+      done()
+    }
+    if (/help\n|menu\n/i.test(text)){
+      help()
+    }
+    if (/pieces\n/i.test(text)){
+      showPieces()
+    }
+    if (/board\n/i.test(text)){
+      showBoard()
+    }
+    if (/checkmate\n/i.test(text)){
+      checkForMate()
+    }
+    else {
+      console.log('not valid input: type help or menu')
+    }
+    
+})
+console.log( 'type help or menu')
+function done(){
+  console.log( 'process.stdin is paused. Exiting...')
+  process.exit()
+}
+function help(){
+  console.log( '\
+  1) to exit, type \'quit\'or \'exit\' + ENTER\n\
+  2) to view a list of pieces on the board type \'pieces\' + ENTER\n\
+  3) to view the board type \'board\' + ENTER\n\
+  4) to check whether the current player is in check or is check Mate type \'checkmate\' + ENTER\
+  ')
+}
+function showPieces(){
+  console.log(pieces)
+}
+function showBoard(){
+  console.log(tBoard3x3)  
+}
+function checkForMate(){
+  console.log(isMate(pieces, 0));
+}
+
 var tiledBoard = require('./chessBoard.js')
 var tBoard3x3 = tiledBoard.buildIt3x3
-console.log(  tBoard3x3);
-console.log(  fullSet)
 
 var standard = require('./chessPieces.js')
 var fullSet = pieces = standard.pieces
 fullSet.splice(fullSet.findIndex(p=>p.piece=='testRook'),1)
-console.log(  fullSet)
-//console.log( fullSet)
 /*  
 var pieces=
 [ { piece: 'king', owner: 1, x: 4, y: 0 },
@@ -33,9 +78,7 @@ var board0=[];
       else {board0[row][col]=[0]}}}
 return board0
 }
-console.log(count,': ')
-count++
-console.log(buildBoard());
+
 
 function pawnThreat(player, x, y, target){
  var flip=(-player || 1)
@@ -381,7 +424,6 @@ return threats.length ? threats : false
 function isCheck(pieces, player){
 var ks = pieces.find(pec => pec.piece == 'king' && pec.owner == player)
   if (!ks || !pieces.length){return false}
-console.log(buildBoard());
 return findThreats(pieces, player, ks)
 }
 
@@ -463,4 +505,3 @@ var xflip=(xd == 0 ? ks.x : xd>0 ? 1 : -1),
   console.log(captures, blocks, kingmoves );
 return captures.length + blocks.length + kingmoves.length ? false : true
 };;
-console.log(isMate(fullSet, 0));
