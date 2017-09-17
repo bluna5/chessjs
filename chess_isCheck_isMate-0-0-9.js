@@ -22,8 +22,8 @@ process.stdin.on('data', function(text){
     else {
       console.log('not valid input: type help or menu')
     }
-    
 })
+
 console.log( 'type help or menu')
 function done(){
   console.log( 'process.stdin is paused. Exiting...')
