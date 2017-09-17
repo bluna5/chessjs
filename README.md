@@ -10,14 +10,14 @@ Latest Version : chess_isCheck_isMate-0-0-8.js
 #****#
 
 #****#
+REQUIREMENTS : 
+NodeJs v6 or higher
+#****#
+
+#****#
 INSTALLATION : 
 To run tests on the mate check and check check, clone 
-or download the chessjs folder. You can then open the 
-latest version in a browser or run the latest version 
-from the command line with NodeJs vel. sim.
-
-If you are running it in a browser, the only output will be 
-in the javascript console. 
+or download the chessjs folder. You can then run the latest version from the command line with NodeJs vel. sim.
 
 the current default piece set is saved under chessPieces.js
 
