@@ -7,16 +7,16 @@ process.stdin.on('data', function(text){
     if (/quit\n|exit\n/i.test(text)){
       done()
     }
-    if (/help\n|menu\n/i.test(text)){
+    else if (/help\n|menu\n/i.test(text)){
       help()
     }
-    if (/pieces\n/i.test(text)){
+    else if (/pieces\n/i.test(text)){
       showPieces()
     }
-    if (/board\n/i.test(text)){
+    else if (/board\n/i.test(text)){
       showBoard()
     }
-    if (/checkmate\n/i.test(text)){
+    else if (/checkmate\n/i.test(text)){
       checkForMate()
     }
     else {
