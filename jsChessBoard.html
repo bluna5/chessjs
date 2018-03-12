@@ -94,8 +94,8 @@ div.tileDiv{
             let pChar= document.createElement('p')
                            .appendChild(document
                            .createTextNode(piece.char))
-            pChar.addEventListener('click', dragOnDrop, false)
-//            divs[d].addEventListener('click', dragOnDrop, false)
+//            pChar.addEventListener('click', dragOnDrop, false)
+            divs[d].addEventListener('click', dragOnDrop, false)
             divs[d].appendChild(pChar)
           }
           else{
