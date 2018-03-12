@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8'>
+    <link href='chessStyle.css' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <script src='./pieces.js'></script>
+    <script>
+      // event handlers
+      let firstClick = true
+      let fCId = ''
+      function dragOnDrop(elem){
+        let tmpClick = firstClick
+        firstClick = !firstClick
+        let clkDiv = elem.target.id
+        if (tmpClick){
+          fCId = clkDiv 
+        }
+        else{
+          console.log( 'second click')
+          console.log( fCId, clkDiv)
+          fCId = '' 
+        }
+        //elem.target.style.color='white'
+        let square = elem.target
+        console.log( square)
+      }
+
+    </script>
+    <script>
+      let boardDiv = document.createElement('div')
+      boardDiv.className = 'board'
+      boardDiv.id = 'board'
+      document.getElementsByTagName('body')[0].appendChild(boardDiv)
+
+      // build empty board
+      // div buffer
+      let boardFrag = document.createDocumentFragment()
+      for (let row=0; row<8; row++){
+        let rowDiv = document.createElement('div')
+        rowDiv.className='rowDiv'
+        for (let col=0; col<8; col++){
+          let tileDiv = document.createElement('div')
+          tileDiv.className = 'tileDiv'
+          tileDiv.style.backgroundColor = ((col+row)%2 === 1 ? 'brown' : 'tan')
+          rowDiv.appendChild(tileDiv)
+        }
+        boardFrag.appendChild(rowDiv)
+      }
+      document.getElementById('board').appendChild(boardFrag)
+
+      // 
+      function rotateBoard(color){
+        let divs = document.getElementsByClassName('tileDiv')
+        let alph =  ['a','b','c','d','e','f','g','h']
+        alph = color ? alph.reverse() : alph
+        for (let d=0; d<divs.length; d++){
+          let dC = color ? d : Math.abs(d-63)
+          let n = (Math.ceil((dC+1)/8)%8) || 8
+          let a = alph[d%8]
+          let id = a + n
+          let coord = document.createTextNode(id)
+          divs[d].id=id
+          let piece = pieces.find(p => p.x===dC%8 && p.y===n-1) || null
+          if (piece){
+            let pChar= document.createElement('p')
+                           .appendChild(document
+                           .createTextNode(piece.char))
+            divs[d].addEventListener('click', dragOnDrop, false)
+            divs[d].appendChild(pChar)
+          }
+          else{
+            divs[d].addEventListener('click', dragOnDrop, false)
+            divs[d].appendChild(coord)
+          }
+        }
+      }        
+      rotateBoard(0)
+
+
+    
+    </script>
+
+  </body>
+</html>
