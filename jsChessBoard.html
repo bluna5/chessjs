@@ -2,55 +2,29 @@
 <html lang='en'>
   <head>
     <meta charset='UTF-8'>
-    <style>
-
-:root{
-  --height:100px;
-  --width:100px;
-}
-div{
-  display: inline:block;
-  margin: 0px;
-  border: none;
-  padding: 0px;
-}
-div.rowDiv{
-  display: inline:block;
-  margin: 0px;
-  border: none;
-  padding: 0px;
-  height: var(--height);
-}
-div.tileDiv{
-  display: inline-block;
-  vertical-align:top;
-  text-align:center;
-  width: var(--width);
-  height: var(--height);
-  border:solid 0px;
-  margin:0px 0px;
-  padding:0px;
-  font-size:5em;
-}
-.piece{
-  padding:0px;
-  margin:0px;
-  position:absolute;
-  vertical-align:top;
-  text-align:center;
-
-}
-
-      </style>
+    <link href='chessStyle.css' rel='stylesheet' type='text/css'>
   </head>
   <body>
     <script src='./pieces.js'></script>
     <script>
+      // event handlers
+      let firstClick = true
+      let fCId = ''
       function dragOnDrop(elem){
-        elem.target.style.color='white'
-        let square = elem.target.parentElement
+        let tmpClick = firstClick
+        firstClick = !firstClick
+        let clkDiv = elem.target.id
+        if (tmpClick){
+          fCId = clkDiv 
+        }
+        else{
+          console.log( 'second click')
+          console.log( fCId, clkDiv)
+          fCId = '' 
+        }
+        //elem.target.style.color='white'
+        let square = elem.target
         console.log( square)
-
       }
 
     </script>
@@ -60,9 +34,9 @@ div.tileDiv{
       boardDiv.id = 'board'
       document.getElementsByTagName('body')[0].appendChild(boardDiv)
 
+      // build empty board
       // div buffer
       let boardFrag = document.createDocumentFragment()
-
       for (let row=0; row<8; row++){
         let rowDiv = document.createElement('div')
         rowDiv.className='rowDiv'
@@ -70,16 +44,15 @@ div.tileDiv{
           let tileDiv = document.createElement('div')
           tileDiv.className = 'tileDiv'
           tileDiv.style.backgroundColor = ((col+row)%2 === 1 ? 'brown' : 'tan')
-          
           rowDiv.appendChild(tileDiv)
         }
         boardFrag.appendChild(rowDiv)
       }
       document.getElementById('board').appendChild(boardFrag)
 
+      // 
       function rotateBoard(color){
         let divs = document.getElementsByClassName('tileDiv')
-
         let alph =  ['a','b','c','d','e','f','g','h']
         alph = color ? alph.reverse() : alph
         for (let d=0; d<divs.length; d++){
@@ -94,16 +67,16 @@ div.tileDiv{
             let pChar= document.createElement('p')
                            .appendChild(document
                            .createTextNode(piece.char))
-//            pChar.addEventListener('click', dragOnDrop, false)
             divs[d].addEventListener('click', dragOnDrop, false)
             divs[d].appendChild(pChar)
           }
           else{
+            divs[d].addEventListener('click', dragOnDrop, false)
             divs[d].appendChild(coord)
           }
         }
       }        
-      rotateBoard(1)
+      rotateBoard(0)
 
 
     

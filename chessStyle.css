@@ -1,0 +1,36 @@
+:root{
+  --height:100px;
+  --width:100px;
+}
+div{
+  display: inline:block;
+  margin: 0px;
+  border: none;
+  padding: 0px;
+}
+div.rowDiv{
+  display: inline:block;
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  height: var(--height);
+}
+div.tileDiv{
+  display: inline-block;
+  vertical-align:top;
+  text-align:center;
+  width: var(--width);
+  height: var(--height);
+  border:solid 0px;
+  margin:0px 0px;
+  padding:0px;
+  font-size:5em;
+}
+.piece{
+  padding:0px;
+  margin:0px;
+  position:absolute;
+  vertical-align:top;
+  text-align:center;
+
+}
