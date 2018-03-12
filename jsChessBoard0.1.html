@@ -44,12 +44,10 @@ div.tileDiv{
       </style>
   </head>
   <body>
-    <script src='./pieces.js'></script>
     <script>
       function dragOnDrop(elem){
         elem.target.style.color='white'
         let square = elem.target.parentElement
-        console.log( square)
 
       }
 
@@ -70,13 +68,13 @@ div.tileDiv{
           let tileDiv = document.createElement('div')
           tileDiv.className = 'tileDiv'
           tileDiv.style.backgroundColor = ((col+row)%2 === 1 ? 'brown' : 'tan')
-          
           rowDiv.appendChild(tileDiv)
         }
         boardFrag.appendChild(rowDiv)
       }
       document.getElementById('board').appendChild(boardFrag)
 
+      let color = 0
       function rotateBoard(color){
         let divs = document.getElementsByClassName('tileDiv')
 
@@ -84,28 +82,26 @@ div.tileDiv{
         alph = color ? alph.reverse() : alph
         for (let d=0; d<divs.length; d++){
           let dC = color ? d : Math.abs(d-63)
+          console.log( 'd: ', d)
           let n = (Math.ceil((dC+1)/8)%8) || 8
-          let a = alph[d%8]
-          let id = a + n
-          let coord = document.createTextNode(id)
-          divs[d].id=id
-          let piece = pieces.find(p => p.x===dC%8 && p.y===n-1) || null
-          if (piece){
-            let pChar= document.createElement('p')
-                           .appendChild(document
-                           .createTextNode(piece.char))
-            pChar.addEventListener('click', dragOnDrop, false)
-//            divs[d].addEventListener('click', dragOnDrop, false)
-            divs[d].appendChild(pChar)
-          }
-          else{
-            divs[d].appendChild(coord)
-          }
+          let a = alph[(d)%8]
+          let coord = document.createTextNode(a + n)
+          divs[d].appendChild(coord)
         }
       }        
-      rotateBoard(1)
+      rotateBoard(0)
 
 
+      let tileXY = document.getElementsByClassName('tileDiv')
+  console.log( tileXY)
+      let pieceP = document.createElement('p')
+      pieceP.className='piece'
+      let kingB = document.createTextNode('♚')
+      pieceP.appendChild(kingB)
+      pieceP.addEventListener('click', dragOnDrop, false)
+//      pieceP.onmousedown=dragOnDrop(this)
+      kingB.className='piece'
+      tileXY[40].appendChild(pieceP)
     
     </script>
 
