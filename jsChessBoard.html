@@ -9,20 +9,17 @@
     <script src='./isCheckIsMate.js'></script>
     <script>
 
-      player = 0
+      // global player var
+      let player = 0
       function validateMove(move){
         let tmpPieceArr = [...pieces]
-        // START HERE
         let fPiece = tmpPieceArr.find(p => p.x === move[0][0] && p.y === move[0][1])
         let sPiece = tmpPieceArr.find(p => p.x === move[1][0] && p.y === move[1][1]) || {'x': move[1][0], 'y': move[1][1]}
         let retVal = pieceToFunc[fPiece.piece](tmpPieceArr, player, fPiece)
         if (retVal.find(a => a.join('') === sPiece.x+''+sPiece.y)){
-          // switch player
-          player = player^1
-
           return true
         }
-         
+        return false
       }
       // event handlers
       // global click vars
@@ -31,21 +28,34 @@
       let fClick = null
       let clearFirst = () => {fCId = fCx = fCy = fClick = null}
       function dragOnDrop(elem){
-        let p = pieces.find(p => p.x === elem.target.x && p.y === elem.target.y)
+        let piece = pieces.find(p => p.x === elem.target.x && p.y === elem.target.y) || {'x': elem.target.x, 'y': elem.target.y}
+        // firstClick
         if (!fCId){
-          if (p){
+          if (piece.piece){
             fCId = elem.target.id
             fCx = elem.target.x
             fCy = elem.target.y
-            fClick = p
+            fClick = piece
           }
         }
+        // second click
         else {
-          console.log( 'second click')
-          console.log( fCId,fCx, fCy, '::', elem.target.id, elem.target.x, elem.target.y)
-          validateMove([[fCx, fCy], [elem.target.x, elem.target.y]])
+          console.log( fCId,fCx, fCy, '::', piece.id, piece.x, piece.y)
+          if (validateMove([[fCx, fCy], [piece.x, piece.y]])){
+            let origP = pieces.find(p => p.x === fCx && p.y === fCy) 
+            let trgtP = pieces.findIndex(p => p.x === piece.x && p.y === piece.y)
+            origP.x = piece.x
+            origP.y = piece.y
+            // remove captured piece if exists
+            if (trgtP > -1){
+              pieces.splice(trgtP, 1)
+            }
+            // switch player
+            player = player^1
+            fillBoard(0)
+          }
           clearFirst()
-          console.log( 'cleared?', fCId, fCx, fCy, fClick)
+           console.log( 'cleared?', fCId, fCx, fCy, fClick)
         }
       }
 

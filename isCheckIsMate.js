@@ -1,27 +1,43 @@
-function pawnThreat(player, pawn, target){
- let flip = (-player || 1)
-  if (pawn.x+1 === target.x && pawn.y+flip === target.y
-  ||  pawn.x-1 === target.x && pawn.y+flip === target.y
-  ||  pawn.x === target.x+1 && pawn.y === target.y && target.piece === 'pawn'
-      && target.prevY === target.y+2*flip
-  ||  pawn.x === target.x-1 && pawn.y === target.y && target.piece === 'pawn'
-      && target.prevY === target.y+2*flip){
-    return true
-  }
-  else return false
+let pieceToFunc = {
+  'pawn': pawnMoveCheck
 }
-function pawnMove(pieces, player, pawn){ // START HERE
+
+function pawnMoveCheck(pieces, player, pawn){
+  let moves = pawnMove(pieces, player, pawn)
+  let takes = pawnThreat(pieces, player, pawn)
+  return [...moves, ...takes]
+}
+
+function pawnThreat(pieces, player, pawn){
+  let takes = []
+  let flip = (-player || 1)
+  let range = [-1,1]
+  range.forEach(r => {
+    if (pieces.find(p => 
+      p.x === pawn.x + r && p.y === pawn.y + flip && p.player !== player)){
+      takes.push([pawn.x + r, pawn.y + flip]) 
+    }
+    if (pieces.find(p =>
+      p.x == pawn.x + r && p.y === (flip ? 4 : 5) && p.piece === 'pawn' && p.player !== player)){
+      takes.push([pawn.x + r, pawn.y + flip])
+    }
+  })
+  return takes
+}
+function pawnMove(pieces, player, pawn){
   let moves = []
-  let flip = (player || -1);
+  let flip = (-player || 1);
   if (! pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip)){
-    moves.push([p.x, (p.y + flip)])
-  }
-  flip = (player || -2)
-  if (! pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip)){
-    moves.push([p.x, (p.y + flip)])
+    moves.push([pawn.x, (pawn.y + flip)])
+    if (pawn.y === (7+flip)%7 
+    && ! pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip*2)){
+      moves.push([pawn.x, (pawn.y + flip*2)])
+    }
   }
   return moves
 }
+/*
+
 function knightMove(pieces, player, s, moves2){
   let pi = pieces.findIndex(p => p.x === s.x && p.y === s.y)
   let x = [1,-1, 2, -2];
@@ -411,3 +427,4 @@ function isMate(pieces, player){
   console.log(captures, blocks, kingmoves );
   return captures.length + blocks.length + kingmoves.length ? false : true
 };;
+*/
