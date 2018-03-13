@@ -9,10 +9,19 @@
     <script src='./isCheckIsMate.js'></script>
     <script>
 
+      player = 0
       function validateMove(move){
-        let tmpArr = [...pieces]
-        console.log( move)
+        let tmpPieceArr = [...pieces]
         // START HERE
+        let fPiece = tmpPieceArr.find(p => p.x === move[0][0] && p.y === move[0][1])
+        let sPiece = tmpPieceArr.find(p => p.x === move[1][0] && p.y === move[1][1]) || {'x': move[1][0], 'y': move[1][1]}
+        let retVal = pieceToFunc[fPiece.piece](tmpPieceArr, player, fPiece)
+        if (retVal.find(a => a.join('') === sPiece.x+''+sPiece.y)){
+          // switch player
+          player = player^1
+
+          return true
+        }
          
       }
       // event handlers
