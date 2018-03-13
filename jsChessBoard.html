@@ -6,33 +6,32 @@
   </head>
   <body>
     <script src='./pieces.js'></script>
-    <script src='./chess_isCheck_isMate.js'></script>
+    <script src='./isCheckIsMate.js'></script>
     <script>
 
       function validMove(piece){
         let tmpArr = [...pieces]
-console.log( tmpArr)
+         
       }
-validMove()
       // event handlers
       let firstClick = true
       let fCId = ''
+      let fCx, fCy
       function dragOnDrop(elem){
-        let tmpClick = firstClick
-        firstClick = !firstClick
-        let clkDiv = elem.target.id
-        if (tmpClick){
-          fCId = clkDiv 
+        if (firstClick){
+          fCId = elem.target.id
+          fCx = elem.target.x
+          fCy = elem.target.y
         }
         else{
           console.log( 'second click')
-          console.log( fCId, clkDiv)
-          fCId = '' 
+          console.log( fCId,fCx, fCy, '::', elem.target.id, elem.target.x, elem.target.y)
         }
+        firstClick = ! firstClick
         //elem.target.style.color='white'
-        let square = elem.target
-        console.log( square)
+
       }
+
 
     </script>
     <script>
@@ -57,34 +56,56 @@ validMove()
       }
       document.getElementById('board').appendChild(boardFrag)
 
-      // 
-      function rotateBoard(color){
+      // helper function 
+      function clearNode(node){
+        while(node.firstChild){
+          node.removeChild(node.firstChild)
+        }
+      }
+      function fillBoard(color){
         let divs = document.getElementsByClassName('tileDiv')
         let alph =  ['a','b','c','d','e','f','g','h']
         alph = color ? alph.reverse() : alph
         for (let d=0; d<divs.length; d++){
+          clearNode(divs[d])
           let dC = color ? d : Math.abs(d-63)
           let n = (Math.ceil((dC+1)/8)%8) || 8
           let a = alph[d%8]
           let id = a + n
           let coord = document.createTextNode(id)
-          divs[d].id=id
+          divs[d].id = id
           let piece = pieces.find(p => p.x===dC%8 && p.y===n-1) || null
           if (piece){
-            let pChar= document.createElement('p')
+            piece.id = id
+            let pChar = document.createElement('p')
                            .appendChild(document
                            .createTextNode(piece.char))
+            divs[d].x = piece.x
+            divs[d].y = piece.y
             divs[d].addEventListener('click', dragOnDrop, false)
             divs[d].appendChild(pChar)
           }
           else{
             divs[d].addEventListener('click', dragOnDrop, false)
             divs[d].appendChild(coord)
+            divs[d].x = d%8 + 1
+            divs[d].y = n + 1
           }
         }
-      }        
-      rotateBoard(0)
+      }
+      fillBoard(0)
 
+    let rvrBtn = document.createElement('button')
+    rvrBtn.id = 'rvrBtn' 
+    rvrBtn.side = 0
+    rvrBtn.appendChild(document.createTextNode('flip'))
+    document.getElementsByTagName('body')[0].appendChild(rvrBtn)
+    rvrBtn.addEventListener('click', flipBoard, false)
+
+    function flipBoard(event){
+      rvrBtn.side = !rvrBtn.side
+      return fillBoard(rvrBtn.side) 
+    }
 
     
     </script>

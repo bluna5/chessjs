@@ -1,18 +1,18 @@
-function pawnThreat(player, x, y, target){
+function pawnThreat(player, pawn, target){
  let flip = (-player || 1)
-  if (x+1 == target.x && y+flip == target.y
-  ||  x-1 == target.x && y+flip == target.y
-  ||  x == target.x+1 && y == target.y && target.piece=='pawn'
-      && target.prevY == target.y+2*flip
-  ||  x == target.x-1 && y == target.y && target.piece=='pawn'
-      && target.prevY == target.y+2*flip){
+  if (pawn.x+1 === target.x && pawn.y+flip === target.y
+  ||  pawn.x-1 === target.x && pawn.y+flip === target.y
+  ||  pawn.x === target.x+1 && pawn.y === target.y && target.piece === 'pawn'
+      && target.prevY === target.y+2*flip
+  ||  pawn.x === target.x-1 && pawn.y === target.y && target.piece === 'pawn'
+      && target.prevY === target.y+2*flip){
     return true
   }
   else return false
 }
 function pawnMove(pieces, player, s, moves2){
   let flip = (player || -1);
-  if (! pieces.find(p => p.x===s.x && p.y===s.y+flip)){
+  if (! pieces.find(p => p.x === s.x && p.y === s.y+flip)){
   let pi = pieces.findIndex(p=> p.x==s.x && p.y == s.y)
     pieces[pi]['y']=s.y+flip
     if (! isCheck(pieces, player)){
