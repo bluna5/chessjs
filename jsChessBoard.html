@@ -9,32 +9,43 @@
     <script src='./isCheckIsMate.js'></script>
     <script>
 
-      function validMove(piece){
+      function validateMove(move){
         let tmpArr = [...pieces]
+        console.log( move)
+        // START HERE
          
       }
       // event handlers
-      let firstClick = true
-      let fCId = ''
-      let fCx, fCy
+      // global click vars
+      let fCId = null 
+      let fCx, fCy = null
+      let fClick = null
+      let clearFirst = () => {fCId = fCx = fCy = fClick = null}
       function dragOnDrop(elem){
-        if (firstClick){
-          fCId = elem.target.id
-          fCx = elem.target.x
-          fCy = elem.target.y
+        let p = pieces.find(p => p.x === elem.target.x && p.y === elem.target.y)
+        if (!fCId){
+          if (p){
+            fCId = elem.target.id
+            fCx = elem.target.x
+            fCy = elem.target.y
+            fClick = p
+          }
         }
-        else{
+        else {
           console.log( 'second click')
           console.log( fCId,fCx, fCy, '::', elem.target.id, elem.target.x, elem.target.y)
+          validateMove([[fCx, fCy], [elem.target.x, elem.target.y]])
+          clearFirst()
+          console.log( 'cleared?', fCId, fCx, fCy, fClick)
         }
-        firstClick = ! firstClick
-        //elem.target.style.color='white'
-
       }
-
 
     </script>
     <script>
+      // globals
+      let currPlayer = 0
+      // end globals
+      
       let boardDiv = document.createElement('div')
       boardDiv.className = 'board'
       boardDiv.id = 'board'
@@ -42,19 +53,22 @@
 
       // build empty board
       // div buffer
-      let boardFrag = document.createDocumentFragment()
-      for (let row=0; row<8; row++){
-        let rowDiv = document.createElement('div')
-        rowDiv.className='rowDiv'
-        for (let col=0; col<8; col++){
-          let tileDiv = document.createElement('div')
-          tileDiv.className = 'tileDiv'
-          tileDiv.style.backgroundColor = ((col+row)%2 === 1 ? 'brown' : 'tan')
-          rowDiv.appendChild(tileDiv)
+      function paintBoard(){
+        let boardFrag = document.createDocumentFragment()
+        for (let row=0; row<8; row++){
+          let rowDiv = document.createElement('div')
+          rowDiv.className='rowDiv'
+          for (let col=0; col<8; col++){
+            let tileDiv = document.createElement('div')
+            tileDiv.className = 'tileDiv'
+            tileDiv.style.backgroundColor = ((col+row)%2 === 1 ? 'brown' : 'tan')
+            rowDiv.appendChild(tileDiv)
+          }
+          boardFrag.appendChild(rowDiv)
         }
-        boardFrag.appendChild(rowDiv)
+        // paint empty board
+        document.getElementById('board').appendChild(boardFrag)
       }
-      document.getElementById('board').appendChild(boardFrag)
 
       // helper function 
       function clearNode(node){
@@ -62,6 +76,7 @@
           node.removeChild(node.firstChild)
         }
       }
+
       function fillBoard(color){
         let divs = document.getElementsByClassName('tileDiv')
         let alph =  ['a','b','c','d','e','f','g','h']
@@ -93,20 +108,29 @@
           }
         }
       }
-      fillBoard(0)
 
-    let rvrBtn = document.createElement('button')
-    rvrBtn.id = 'rvrBtn' 
-    rvrBtn.side = 0
-    rvrBtn.appendChild(document.createTextNode('flip'))
-    document.getElementsByTagName('body')[0].appendChild(rvrBtn)
-    rvrBtn.addEventListener('click', flipBoard, false)
+      // for online multiplayer
+      function makeStartBtn(){
+        let startBtn = document.createElement('button')
+        startBtn.id = 'startBtn'
+        // import player fillBoard('player')
+      }
+      function makeFlipBtn(){
+        let rvrBtn = document.createElement('button')
+        rvrBtn.id = 'rvrBtn' 
+        rvrBtn.side = 0
+        rvrBtn.appendChild(document.createTextNode('flip'))
+        document.getElementsByTagName('body')[0].appendChild(rvrBtn)
+        rvrBtn.addEventListener('click', flipBoard, false)
+      }
+      function flipBoard(event){
+        rvrBtn.side = !rvrBtn.side
+         fillBoard(rvrBtn.side) 
+      }
 
-    function flipBoard(event){
-      rvrBtn.side = !rvrBtn.side
-      return fillBoard(rvrBtn.side) 
-    }
-
+      // run startup scripts
+      paintBoard()
+      makeFlipBtn()
     
     </script>
 

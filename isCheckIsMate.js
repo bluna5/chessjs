@@ -10,32 +10,17 @@ function pawnThreat(player, pawn, target){
   }
   else return false
 }
-function pawnMove(pieces, player, s, moves2){
+function pawnMove(pieces, player, pawn){ // START HERE
+  let moves = []
   let flip = (player || -1);
-  if (! pieces.find(p => p.x === s.x && p.y === s.y+flip)){
-  let pi = pieces.findIndex(p=> p.x==s.x && p.y == s.y)
-    pieces[pi]['y']=s.y+flip
-    if (! isCheck(pieces, player)){
-      moves2.push([s.x,s.y])
-      pieces[pi]['y']=s.y-flip
-    }
-      else{
-        pieces[pi]['y']=s.y-flip
-    }
-    if (s.owner==0 && s.y==6 || s.owner==1 && s.y==1){
-      if (!pieces.find(p=> p.x==s.x && p.y==s.y+2*flip)){
-      pieces[pi]['y']=s.y+2*flip
-        if (! isCheck(pieces, player)){
-          moves2.push([s.x, s.y])
-          pieces[pi]['y']=s.y-2*flip
-        }
-        else{
-          pieces[pi]['y']=s.y-2*flip
-        }
-      }
+  if (! pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip)){
+    moves.push([p.x, (p.y + flip)])
   }
-  else{pieces[pi]['y']=s.y-flip}
+  flip = (player || -2)
+  if (! pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip)){
+    moves.push([p.x, (p.y + flip)])
   }
+  return moves
 }
 function knightMove(pieces, player, s, moves2){
   let pi = pieces.findIndex(p => p.x === s.x && p.y === s.y)
