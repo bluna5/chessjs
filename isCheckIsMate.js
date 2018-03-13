@@ -1,5 +1,6 @@
 let pieceToFunc = {
-  'pawn': pawnMoveCheck
+  'pawn': pawnMoveCheck,
+  'knight': knightMove
 }
 
 function pawnMoveCheck(pieces, player, pawn){
@@ -36,29 +37,26 @@ function pawnMove(pieces, player, pawn){
   }
   return moves
 }
-/*
 
-function knightMove(pieces, player, s, moves2){
-  let pi = pieces.findIndex(p => p.x === s.x && p.y === s.y)
+function knightMove(pieces, player, knight){
+  let moves = []
   let x = [1,-1, 2, -2];
-  for (var i=0, j=0; i<x.length, j<x.length; i++, j++){
-    if (Math.abs(x[i]) !== Math.abs(x[j])){
-      if (s.x+x[i]<8 && s.y+x[j]<8 && s.x+x[i]>0 && s.y+x[j]>0){
-        if (!pieces.find(p => p.x===s.x+x[i] 
-                           && p.y===s.y+x[j] 
-                           && p.player === player)){
-          pieces[pi]['x']+=x[i]
-          pieces[pi]['y']+=x[j]
-          if (!isCheck(pieces, player)){
-            moves2.push([s.x,s.y])
+  for (let i=0; i<x.length; i++){
+    for (let j=0; j<x.length; j++){
+      if (Math.abs(x[i]) !== Math.abs(x[j])){
+        if (knight.x+x[i]<8 && knight.y+x[j]<8 && knight.x+x[i]>-1 && knight.y+x[j]>-1){
+          if (!pieces.find(p => p.x === knight.x+x[i] 
+                             && p.y === knight.y+x[j] 
+                             && p.player === player)){
+            moves.push([knight.x + x[i], knight.y + x[j]])
           }
-          pieces[pi]['x']-=x[i]
-          pieces[pi]['y']-=x[j]
         }
       }
     }
   }
+  return moves
 }
+/*
 function bishopMove(pieces, player, s, moves2){
 let pi= pieces.findIndex(p=> p.x==s.x && p.y == s.y)
 for (var i = 1, j = 1; i<8-s.x && j<8-s.y; i++, j++){

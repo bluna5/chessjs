@@ -10,12 +10,13 @@
     <script>
 
       // global player var
+      let playerSide = 0
       let player = 0
+       
       function validateMove(move){
-        let tmpPieceArr = [...pieces]
-        let fPiece = tmpPieceArr.find(p => p.x === move[0][0] && p.y === move[0][1])
-        let sPiece = tmpPieceArr.find(p => p.x === move[1][0] && p.y === move[1][1]) || {'x': move[1][0], 'y': move[1][1]}
-        let retVal = pieceToFunc[fPiece.piece](tmpPieceArr, player, fPiece)
+        let fPiece = pieces.find(p => p.x === move[0][0] && p.y === move[0][1])
+        let sPiece = pieces.find(p => p.x === move[1][0] && p.y === move[1][1]) || {'x': move[1][0], 'y': move[1][1]}
+        let retVal = pieceToFunc[fPiece.piece](pieces, player, fPiece)
         if (retVal.find(a => a.join('') === sPiece.x+''+sPiece.y)){
           return true
         }
@@ -31,7 +32,7 @@
         let piece = pieces.find(p => p.x === elem.target.x && p.y === elem.target.y) || {'x': elem.target.x, 'y': elem.target.y}
         // firstClick
         if (!fCId){
-          if (piece.piece){
+          if (piece.piece && piece.owner === player){
             fCId = elem.target.id
             fCx = elem.target.x
             fCy = elem.target.y
@@ -52,10 +53,11 @@
             }
             // switch player
             player = player^1
-            fillBoard(0)
+            fillBoard(playerSide)
+            let tD = document.getElementById('turnDiv')
+            tD.style.backgroundColor = (player ? 'black' : 'white')
           }
           clearFirst()
-           console.log( 'cleared?', fCId, fCx, fCy, fClick)
         }
       }
 
@@ -76,7 +78,7 @@
         let boardFrag = document.createDocumentFragment()
         for (let row=0; row<8; row++){
           let rowDiv = document.createElement('div')
-          rowDiv.className='rowDiv'
+          rowDiv.className = 'rowDiv'
           for (let col=0; col<8; col++){
             let tileDiv = document.createElement('div')
             tileDiv.className = 'tileDiv'
@@ -135,21 +137,28 @@
         // import player fillBoard('player')
       }
       function makeFlipBtn(){
-        let rvrBtn = document.createElement('button')
-        rvrBtn.id = 'rvrBtn' 
-        rvrBtn.side = 0
-        rvrBtn.appendChild(document.createTextNode('flip'))
-        document.getElementsByTagName('body')[0].appendChild(rvrBtn)
-        rvrBtn.addEventListener('click', flipBoard, false)
+        let flipBtn = document.createElement('button')
+        flipBtn.id = 'flipBtn' 
+        flipBtn.appendChild(document.createTextNode('flip'))
+        document.getElementsByTagName('body')[0].appendChild(flipBtn)
+        flipBtn.addEventListener('click', flipBoard, false)
       }
       function flipBoard(event){
-        rvrBtn.side = !rvrBtn.side
-         fillBoard(rvrBtn.side) 
+        playerSide = playerSide^1
+        fillBoard(player)
+      }
+      function makeTurnDiv(){
+        let turnDiv = document.createElement('div')
+        turnDiv.id = 'turnDiv'
+        turnDiv.appendChild(document.createTextNode('turn'))
+        document.getElementsByTagName('body')[0].appendChild(turnDiv)
       }
 
       // run startup scripts
       paintBoard()
+      fillBoard(0)
       makeFlipBtn()
+      makeTurnDiv()
     
     </script>
 
