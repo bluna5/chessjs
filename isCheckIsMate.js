@@ -15,11 +15,11 @@ function pawnThreat(pieces, player, pawn){
   let range = [-1,1]
   range.forEach(r => {
     if (pieces.find(p => 
-      p.x === pawn.x + r && p.y === pawn.y + flip && p.player !== player)){
+      p.x === pawn.x + r && p.y === pawn.y + flip && p.owner !== player)){
       takes.push([pawn.x + r, pawn.y + flip]) 
     }
     if (pieces.find(p =>
-      p.x == pawn.x + r && p.y === (flip ? 4 : 5) && p.piece === 'pawn' && p.player !== player)){
+      p.x == pawn.x + r && p.y === (flip ? 4 : 5) && p.piece === 'pawn' && p.owner !== player)){
       takes.push([pawn.x + r, pawn.y + flip])
     }
   })
@@ -47,7 +47,7 @@ function knightMove(pieces, player, knight){
         if (knight.x+x[i]<8 && knight.y+x[j]<8 && knight.x+x[i]>-1 && knight.y+x[j]>-1){
           if (!pieces.find(p => p.x === knight.x+x[i] 
                              && p.y === knight.y+x[j] 
-                             && p.player === player)){
+                             && p.owner === player)){
             moves.push([knight.x + x[i], knight.y + x[j]])
           }
         }
