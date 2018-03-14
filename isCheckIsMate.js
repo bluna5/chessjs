@@ -2,7 +2,8 @@ let pieceToFunc = {
   'pawn': pawnMoveCheck,
   'knight': knightMove,
   'bishop': bishopMove,
-  'rook': rookMove
+  'rook': rookMove,
+  'queen': queenMove
 }
 
 function pawnMoveCheck(pieces, player, pawn){
@@ -60,7 +61,6 @@ function knightMove(pieces, player, knight){
 }
 
 function bishopMove(pieces, player, bishop){
-  console.log( 'binchop')
   let moves = []
   let dir = [-1, 1]
   dir.forEach(dX => {
@@ -72,7 +72,7 @@ function bishopMove(pieces, player, bishop){
         let sq = pieces.find(p =>  p.x === bishop.x + (r*dX)
                                 && p.y === bishop.y + (r*dY))
         if(!sq){
-          moves.push([(bishop.x + r*dY),(bishop.y + r*dY)])
+          moves.push([(bishop.x + r*dX),(bishop.y + r*dY)])
         }
         else if (sq.owner !== player){
           moves.push([sq.x, sq.y])
@@ -88,7 +88,6 @@ function bishopMove(pieces, player, bishop){
 }
 
 function rookMove(pieces, player, rook){
-  console.log( 'wook')
   let moves = []
   let dir = [-1,1]
   dir.forEach(dX =>{
@@ -120,6 +119,15 @@ function rookMove(pieces, player, rook){
     }
   })
   return moves 
+}
+
+function queenMove(pieces, player, queen){
+  console.log( 'qween')
+  let bMoves = bishopMove(pieces, player, queen)
+  console.log( " bMoves", bMoves)
+  let rMoves = rookMove(pieces, player, queen)
+  console.log( " rMoves", rMoves)
+  return [...bMoves, ...rMoves]
 }
 
 /*
