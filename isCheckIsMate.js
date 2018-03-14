@@ -19,8 +19,9 @@ function pawnThreat(pieces, player, pawn){
       p.x === pawn.x + r && p.y === pawn.y + flip && p.owner !== player)){
       takes.push([pawn.x + r, pawn.y + flip]) 
     }
+    // en passant (needs move history to remove captured pawn from pieces)
     if (pieces.find(p =>
-      p.x == pawn.x + r && p.y === (flip ? 4 : 5) && p.piece === 'pawn' && p.owner !== player)){
+      p.x == pawn.x + r && p.y === (flip ? 4 : 3) && p.piece === 'pawn' && p.owner !== player)){
       takes.push([pawn.x + r, pawn.y + flip])
     }
   })
@@ -71,10 +72,10 @@ function bishopMove(pieces, player, bishop){
         let sq = pieces.find(p =>  p.x === bishop.x + (r*dX)
                                 && p.y === bishop.y + (r*dY))
         if(!sq){
-          moves.push([(bishop.x + r*dX), (bishop.y + r*dY)])
+          moves.push([(bishop.x + r*dY),(bishop.y + r*dY)])
         }
         else if (sq.owner !== player){
-          moves.push([bishop.x + r*dX, bishop.y + r*dY])
+          moves.push([sq.x, sq.y])
           break
         }
         else{
@@ -83,11 +84,42 @@ function bishopMove(pieces, player, bishop){
       }
     })
   })
-return moves
+  return moves
 }
 
 function rookMove(pieces, player, rook){
-  
+  console.log( 'wook')
+  let moves = []
+  let dir = [-1,1]
+  dir.forEach(dX =>{
+    let rangeX = (dX === 1 ? 7 - rook.x : rook.x)
+    let rangeY = (dX === 1 ? 7 - rook.y : rook.y)
+    for (let x=1; x<rangeX+1; x++){
+      let sq = pieces.find(p => p.x === rook.x + x*dX
+                             && p.y === rook.y)
+      if (!sq){
+        moves.push([rook.x + x*dX, rook.y])
+      }
+      else if (sq.owner !== player){
+        moves.push([sq.x,sq.y])
+      }
+    }
+    for (let y=1; y<rangeY+1; y++){
+      let sq = pieces.find(p => p.y === rook.y + y*dX
+                             && p.x === rook.x)
+      if (!sq){
+        moves.push([rook.x, rook.y + y*dX])
+      }
+      else if (sq.owner !== player){
+        moves.push([sq.x,sq.y])
+        break
+      }
+      else{
+        break
+      }
+    }
+  })
+  return moves 
 }
 
 /*
