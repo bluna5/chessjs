@@ -176,7 +176,7 @@ function bishopMove(pieces, player, bishop, check){
   return moves
 }
 
-function rookMove(pieces, player, rook){
+function rookMove(pieces, player, rook, check){
   let moves = []
   let dir = [-1,1]
   dir.forEach(dX =>{
@@ -185,12 +185,28 @@ function rookMove(pieces, player, rook){
     for (let x=1; x<rangeX+1; x++){
       let sq = pieces.find(p => p.x === rook.x + x*dX
                              && p.y === rook.y)
+      let target = {'x': rook.x + x*dX, 'y': rook.y}
       if (!sq){
-        moves.push([rook.x + x*dX, rook.y])
+        if (check){
+          if (!checkCheck(pieces, rook, target, false)){
+            moves.push([rook.x + x*dX, rook.y])
+          }
+        }
+        else{
+          moves.push([rook.x + x*dX, rook.y])
+        }
       }
       else if (sq.owner !== player){
-        moves.push([sq.x,sq.y])
-        break
+        if (check){
+          if (!checkCheck(pieces, rook, target, false)){
+            moves.push([rook.x + x*dX, rook.y])
+            break
+          }
+        }
+        else {
+          moves.push([rook.x + x*dX, rook.y])
+          break
+        }
       }
       else {
         break
@@ -199,12 +215,27 @@ function rookMove(pieces, player, rook){
     for (let y=1; y<rangeY+1; y++){
       let sq = pieces.find(p => p.y === rook.y + y*dX
                              && p.x === rook.x)
+      let target = {'x': rook.x, 'y': rook.y + y*dX}
       if (!sq){
-        moves.push([rook.x, rook.y + y*dX])
+        if (check){
+          if (!checkCheck(pieces, rook, target, false)){
+            moves.push([rook.x, rook.y + y*dX])
+          }
+        }
+        else{
+          moves.push([rook.x, rook.y + y*dX])
+        }
       }
       else if (sq.owner !== player){
-        moves.push([sq.x,sq.y])
-        break
+        if(check){
+          if (!checkCheck(pieces, rook, target, false)){
+            moves.push([rook.x, rook.y + y*dX])
+          }
+        }
+        else{
+          moves.push([sq.x,sq.y])
+          break
+        }
       }
       else{
         break
