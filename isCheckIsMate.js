@@ -1,7 +1,8 @@
 let pieceToFunc = {
   'pawn': pawnMoveCheck,
   'knight': knightMove,
-  'bishop': bishopMove
+  'bishop': bishopMove,
+  'rook': rookMove
 }
 
 function pawnMoveCheck(pieces, player, pawn){
@@ -67,70 +68,29 @@ function bishopMove(pieces, player, bishop){
       let rangeY = (dY === 1 ? 7 - bishop.y : bishop.y)
       let range = rangeX < rangeY ? rangeX : rangeY
       for (let r=1; r<range+1; r++){
-        if (!pieces.find(p =>  p.x === bishop.x + (r*dX)
-                            && p.y === bishop.y + (r*dY)
-                            && p.owner === player)){
+        let sq = pieces.find(p =>  p.x === bishop.x + (r*dX)
+                                && p.y === bishop.y + (r*dY))
+        if(!sq){
           moves.push([(bishop.x + r*dX), (bishop.y + r*dY)])
+        }
+        else if (sq.owner !== player){
+          moves.push([bishop.x + r*dX, bishop.y + r*dY])
+          break
+        }
+        else{
+          break
         }
       }
     })
   })
-  return moves
+return moves
+}
+
+function rookMove(pieces, player, rook){
+  
 }
 
 /*
-function rookMove(pieces, player, s, moves2){
-let pi= pieces.findIndex(p=> p.x==s.x && p.y == s.y)
-  for(var i=1; i<8-s.x; i++){
-    if (! pieces.find(p => p.x==s.x+i && p.y==s.y)){
-      pieces[pi]['x']+=i
-      if (!isCheck(pieces,player)){
-        moves2.push([s.x,s.y])
-        pieces[pi]['x']-=i
-      }
-      else{
-        pieces[pi]['x']-=i
-      }
-    }
-  }
-  for(var i=1; i<8-s.y; i++){
-    if (! pieces.find(p => p.x==s.x && p.y==s.y+i)){
-      pieces[pi]['y']+=i
-      if (!isCheck(pieces,player)){
-        moves2.push([s.x,s.y])
-        pieces[pi]['y']-=i
-      }
-      else{
-        pieces[pi]['y']-=i
-      }
-    }
-  }
-  for(var i=-1; i>=-s.x; i--){
-    if (! pieces.find(p => p.x==s.x+i && p.y==s.y)){
-      pieces[pi]['x']+=i
-      if (!isCheck(pieces,player)){
-        moves2.push([s.x,s.y])
-        pieces[pi]['x']-=i
-      }
-      else{
-        pieces[pi]['x']-=i
-      }
-    }
-  }
-  for(var i=1; i>=-s.y; i--){
-    if (! pieces.find(p => p.x==s.x && p.y==s.y+i)){
-      pieces[pi]['y']+=i
-      if (!isCheck(pieces,player)){
-        moves2.push([s.x,s.y])
-        pieces[pi]['y']-=i
-      }
-      else{
-        pieces[pi]['y']-=i
-      }
-    }
-  }
-}
-
 function canMove(pieces, player){
   let set = pieces.filter(p => p.owner === player)
   let moves2 = []
