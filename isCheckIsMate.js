@@ -245,13 +245,13 @@ function rookMove(pieces, player, rook, check){
   return moves 
 }
 
-function queenMove(pieces, player, queen){
-  let bMoves = bishopMove(pieces, player, queen)
-  let rMoves = rookMove(pieces, player, queen)
+function queenMove(pieces, player, queen, check){
+  let bMoves = bishopMove(pieces, player, queen, check)
+  let rMoves = rookMove(pieces, player, queen, check)
   return [...bMoves, ...rMoves]
 }
 
-function kingMove(pieces, player, king){
+function kingMove(pieces, player, king, check){
   let moves = []
   let range = [-1,0,1]
   range.forEach(x => 
@@ -261,11 +261,18 @@ function kingMove(pieces, player, king){
         let kY = king.y + y
         if (kX < 8 && kX > -1 && kY < 8 && kX > -1){
           let sq = pieces.find(p => p.x === kX && p.y === kY)
+          let target = {'x': kX, 'y': kY}
           if (!sq){
-            moves.push([kX, kY])
+            if (check){
+              if (!checkCheck(pieces, king, target, false))
+              moves.push([kX, kY])
+            }
           }
           else if (sq.owner !== player){
-            moves.push([sq.x,sq.y])
+            if (check){
+              if (!checkCheck(pieces, king, target, false))
+              moves.push([kX, kY])
+            }
           }
         }
       }
@@ -276,7 +283,6 @@ function kingMove(pieces, player, king){
 
 
 /*
-
 function isMate(pieces, player){
   let threats = isCheck(pieces, player)
     if (! threats) return false
