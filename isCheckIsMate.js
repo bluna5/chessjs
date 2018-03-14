@@ -6,20 +6,68 @@ let pieceToFunc = {
   'queen': queenMove,
   'king': kingMove
 }
+let threatCheck = {
+  'pawn': pawnThreat,
+  'knight': knightMove,
+  'bishop': bishopMove,
+  'rook': rookMove,
+  'queen': queenMove,
+  'king': kingMove
+}
 
-function pawnMoveCheck(pieces, player, pawn){
-  let moves = pawnMove(pieces, player, pawn)
-  let takes = pawnThreat(pieces, player, pawn)
+function isCheck(pieces, player){
+  let ks = pieces.find(pec => pec.piece == 'king' && pec.owner == player)
+  let opp = pieces.filter(p => p.owner !== player)
+  let threats = []
+  opp.forEach(o =>{ 
+    let pMoves = (threatCheck[o.piece](pieces, player^1, o, false))
+    pMoves.length ? threats.push(...pMoves) : null
+  })
+  for (t=0; t<threats.length; t++){
+    if (threats[t][0] === ks.x && threats[t][1] === ks.y){
+      return true
+    }
+  }
+  return false
+}
+
+function checkCheck(pieces, piece, target){
+  let oP = {'x': piece.x, 'y': piece.y}
+  let tI = pieces.findIndex(p => p.x === target.x && p.y === target.y)
+  let oTP
+  tI > -1 ? oTP = pieces.splice(tI,1) : null
+  piece.x = target.x
+  piece.y = target.y
+  let res = isCheck(pieces, piece.owner)
+  piece.x = oP.x
+  piece.y = oP.y
+  if (oTP){
+    pieces.splice(0,0,oTP[0])
+  }
+  return res
+}
+
+function pawnMoveCheck(pieces, player, pawn, check){
+  let moves = pawnMove(pieces, player, pawn, check)
+  let takes = pawnThreat(pieces, player, pawn, check)
   return [...moves, ...takes]
 }
-function pawnThreat(pieces, player, pawn){
+function pawnThreat(pieces, player, pawn, check){
   let takes = []
   let flip = (-player || 1)
   let range = [-1,1]
   range.forEach(r => {
     if (pieces.find(p => 
       p.x === pawn.x + r && p.y === pawn.y + flip && p.owner !== player)){
-      takes.push([pawn.x + r, pawn.y + flip]) 
+      let target = {'x': pawn.x+r, 'y': pawn.y+flip}
+      if (check){
+        if (!checkCheck(pieces, pawn, target)){ 
+        takes.push([pawn.x + r, pawn.y + flip])
+        }
+      }
+      else {
+        takes.push([pawn.x + r, pawn.y + flip])
+      }
     }
     // en passant (needs move history to remove captured pawn from pieces)
     if (pieces.find(p =>
@@ -29,20 +77,36 @@ function pawnThreat(pieces, player, pawn){
   })
   return takes
 }
-function pawnMove(pieces, player, pawn){
+function pawnMove(pieces, player, pawn, check){
   let moves = []
   let flip = (-player || 1);
   if (! pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip)){
-    moves.push([pawn.x, (pawn.y + flip)])
+    let target = {'x': pawn.x, 'y': pawn.y + flip}
+    if (check){
+      if (!checkCheck(pieces, pawn, target)){
+        moves.push([pawn.x, (pawn.y + flip)])
+      }
+    }
+    else{
+      moves.push([pawn.x, (pawn.y + flip)])
+    }
     if (pawn.y === (7+flip)%7 
     && ! pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip*2)){
-      moves.push([pawn.x, (pawn.y + flip*2)])
+      let target = {'x': pawn.x, 'y': pawn.y + flip*2}
+      if (check){
+        if (!checkCheck(pieces, pawn, target)){
+          moves.push([pawn.x, pawn.y + flip*2])
+        }
+      }
+      else {
+        moves.push([pawn.x, pawn.y + flip*2])
+      }
     }
   }
   return moves
 }
 
-function knightMove(pieces, player, knight){
+function knightMove(pieces, player, knight, check){
   let moves = []
   let x = [1,-1, 2, -2];
   for (let i=0; i<x.length; i++){
@@ -52,7 +116,15 @@ function knightMove(pieces, player, knight){
           if (!pieces.find(p => p.x === knight.x+x[i] 
                              && p.y === knight.y+x[j] 
                              && p.owner === player)){
-            moves.push([knight.x + x[i], knight.y + x[j]])
+            let target = {'x': knight.x+x[i], 'y': knight.y+x[j]}
+            if (check){
+              if (!checkCheck(pieces, knight, target, false)){
+                moves.push([knight.x + x[i], knight.y + x[j]])
+              }
+            }
+            else{
+              moves.push([knight.x + x[i], knight.y + x[j]])
+            }
           }
         }
       }
@@ -61,7 +133,7 @@ function knightMove(pieces, player, knight){
   return moves
 }
 
-function bishopMove(pieces, player, bishop){
+function bishopMove(pieces, player, bishop, check){
   let moves = []
   let dir = [-1, 1]
   dir.forEach(dX => {
@@ -72,12 +144,28 @@ function bishopMove(pieces, player, bishop){
       for (let r=1; r<range+1; r++){
         let sq = pieces.find(p =>  p.x === bishop.x + (r*dX)
                                 && p.y === bishop.y + (r*dY))
+        let target = {'x': bishop.x + r*dX, 'y': bishop.y + r*dY}
         if(!sq){
-          moves.push([(bishop.x + r*dX),(bishop.y + r*dY)])
+          if (check){
+            if (!checkCheck(pieces, bishop, target, false)){
+              moves.push([(bishop.x + r*dX),(bishop.y + r*dY)])
+            }
+          }
+          else{
+            moves.push([(bishop.x + r*dX),(bishop.y + r*dY)])
+          }
         }
         else if (sq.owner !== player){
-          moves.push([sq.x, sq.y])
-          break
+          if (check){
+            if (!checkCheck(pieces, bishop, target, false)){
+              moves.push([sq.x, sq.y])
+              break
+            }
+          }
+          else{
+            moves.push([sq.x, sq.y])
+            break
+          }
         }
         else{
           break
@@ -102,6 +190,10 @@ function rookMove(pieces, player, rook){
       }
       else if (sq.owner !== player){
         moves.push([sq.x,sq.y])
+        break
+      }
+      else {
+        break
       }
     }
     for (let y=1; y<rangeY+1; y++){
@@ -134,17 +226,16 @@ function kingMove(pieces, player, king){
   range.forEach(x => 
     range.forEach(y => {
       if (x|y){
-      console.log( x,y)
         let kX = king.x + x
         let kY = king.y + y
-        kX = kX < 8 && kX > -1 ? kX : null
-        kY = kY < 8 && kY > -1 ? kY : null
-        let sq = pieces.find(p => p.x === kX && p.y === kY)
-        if (!sq){
-          moves.push([kX, kY])
-        }
-        else if (sq.owner !== player){
-          moves.push([sq.x,sq.y])
+        if (kX < 8 && kX > -1 && kY < 8 && kX > -1){
+          let sq = pieces.find(p => p.x === kX && p.y === kY)
+          if (!sq){
+            moves.push([kX, kY])
+          }
+          else if (sq.owner !== player){
+            moves.push([sq.x,sq.y])
+          }
         }
       }
     })
@@ -152,19 +243,8 @@ function kingMove(pieces, player, king){
   return moves
 }
 
-function canMove(pieces, player){
-  let set = pieces.filter(p => p.owner === player)
-}
 
-function findThreats(pieces, player, target){
-  return threats.length ? threats : false
-}
-
-function isCheck(pieces, player){
-  let ks = pieces.find(pec => pec.piece == 'king' && pec.owner == player)
-  if (!ks || !pieces.length) return false
-  return findThreats(pieces, player, ks)
-}
+/*
 
 function isMate(pieces, player){
   let threats = isCheck(pieces, player)

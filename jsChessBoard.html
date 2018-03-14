@@ -16,7 +16,7 @@
       function validateMove(move){
         let fPiece = pieces.find(p => p.x === move[0][0] && p.y === move[0][1])
         let sPiece = pieces.find(p => p.x === move[1][0] && p.y === move[1][1]) || {'x': move[1][0], 'y': move[1][1]}
-        let retVal = pieceToFunc[fPiece.piece](pieces, player, fPiece)
+        let retVal = pieceToFunc[fPiece.piece](pieces, player, fPiece, true)
         if (retVal.find(a => a.join('') === sPiece.x+''+sPiece.y)){
           return true
         }
