@@ -8,6 +8,11 @@ div{
   border: none;
   padding: 0px;
 }
+#turnDiv{
+  display: inline-block;
+  background-color: 'FFFFFF';
+  border:solid 1px;
+}
 div.rowDiv{
   display: inline:block;
   margin: 0px;
@@ -34,7 +39,6 @@ div.tileDiv{
   text-align:center;
 
 }
-button.rvrBtn{
+#flipBtn{
   display: inline-block;
-
 }

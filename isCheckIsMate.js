@@ -3,7 +3,8 @@ let pieceToFunc = {
   'knight': knightMove,
   'bishop': bishopMove,
   'rook': rookMove,
-  'queen': queenMove
+  'queen': queenMove,
+  'king': kingMove
 }
 
 function pawnMoveCheck(pieces, player, pawn){
@@ -127,157 +128,37 @@ function queenMove(pieces, player, queen){
   return [...bMoves, ...rMoves]
 }
 
-/*
+function kingMove(pieces, player, king){
+  let moves = []
+  let range = [-1,0,1]
+  range.forEach(x => 
+    range.forEach(y => {
+      if (x|y){
+      console.log( x,y)
+        let kX = king.x + x
+        let kY = king.y + y
+        kX = kX < 8 && kX > -1 ? kX : null
+        kY = kY < 8 && kY > -1 ? kY : null
+        let sq = pieces.find(p => p.x === kX && p.y === kY)
+        if (!sq){
+          moves.push([kX, kY])
+        }
+        else if (sq.owner !== player){
+          moves.push([sq.x,sq.y])
+        }
+      }
+    })
+  )
+  return moves
+}
+
 function canMove(pieces, player){
   let set = pieces.filter(p => p.owner === player)
-  let moves2 = []
-  set.forEach(function(s){
-    if (s.piece == 'pawn'){
-      pawnMove(pieces, player, s, moves2)
-    }
-    if (s.piece =='knight'){
-      knightMove(pieces, player, s, moves2)
-    }
-    if (s.piece == 'bishop'){
-      bishopMove(pieces, player, s, moves2)
-    }
-    if (s.piece == 'rook'){
-      rookMove(pieces, player, s, moves2)
-    }
-    if (s.piece == 'queen'){
-      bishopMove(pieces, player, s, moves2)
-      rookMove(pieces, player, s, moves2)
-    }
-  })
-  return moves2
 }
 
 function findThreats(pieces, player, target){
-  let opp = [], threats = []
-  for (let p in pieces){
-    if (pieces[p]['owner'] !== player){
-      opp.push(pieces[p])
-    }
-  }
-  opp.forEach(function(o,i){
-    if (o['piece'] === 'pawn' && pawnThreat(player, o.x, o.y, target)){
-      threats.push(o)
-    }
-
-    else if (o['piece']=='knight'){
-      if (o['x']+1 == target.x && o['y']+2 == target.y
-      ||  o['x']+1 == target.x && o['y']-2 == target.y
-      ||  o['x']-1 == target.x && o['y']+2 == target.y
-      ||  o['x']-1 == target.x && o['y']-2 == target.y
-      ||  o['x']+2 == target.x && o['y']+1 == target.y
-      ||  o['x']+2 == target.x && o['y']-1 == target.y
-      ||  o['x']-2 == target.x && o['y']+1 == target.y
-      ||  o['x']-2 == target.x && o['y']-1 == target.y
-    ){threats.push(o)}}//end knight
-
-    else if (o['piece'] == 'bishop'){
-      for (var i = 1, j = 1; i<8-target.x && j<8-target.y; i++, j++){
-        if (o['x'] == target.x + i && o['y'] == target.y + j){
-          threats.push(o);break;}
-        else if (pieces.find(p => p['x'] == target.x + i
-        && p['y'] == target.y + j) !== undefined){break;}}
-      for (var i = 1, j = -1; i<8-target.x && j>=-target.y; i++, j--){
-        if (o['x'] == target.x + i && o['y'] == target.y  + j){
-          threats.push(o);break;}
-        else if (pieces.find(p => p['x'] == target.x + i
-        && p['y'] == target.y + j) != undefined){break;}}
-      for (var i = -1, j = 1; i>=-target.x && j<8-target.y; i--, j++){
-        if (o['x'] == target.x + i && o['y'] == target.y + j){
-          threats.push(o);break;}
-        else if (pieces.find(p => p['x'] == target.x + i
-        && p['y'] == target.y + j) !== undefined){break;}}
-      for (var i = -1, j=-1; i>=-target.x && j>=-target.y; i--, j--){
-        if (o['x'] == target.x + i && o['y'] == target.y + j){
-          threats.push(o);break;}
-        else if (pieces.find(p => p['x']==target.x + i
-        && p['y'] == target.y + j) !== undefined){break;}}
-    }//end bishop
-
-    else if (o['piece']=='rook'){
-      for (var j=1; j<8-target.y; j++){
-        if (o['x'] == target.x && o['y'] == target.y + j){
-          threats.push(o);break;}
-        else if (pieces.find(p => p['x'] == target.x
-        && p['y'] == target.y + j) !== undefined){break;}}
-      for (var j=-1; j>=-target.y; j--){
-        if (o['x'] == target.x && o['y'] == target.y + j){
-          threats.push(o);break;}
-        else if (pieces.find(p => p['x'] == target.x
-        && p['y'] == target.y + j)!== undefined){break;}}
-      for (var j=1; j<8-target.x; j++){
-        if (o['x'] == target.x + j && o['y'] == target.y){
-          threats.push(o);break;}
-          else if (pieces.find(p => p['x'] == target.x + j
-          && p['y'] == target.y) !== undefined){break;}}
-      for (var j=-1; j>=-target.x; j--){
-        if (o['x'] == target.x + j && o['y'] == target.y){
-          threats.push(o);break;}
-        else if (pieces.find(p => p['x'] == target.x + j
-        && p['y'] == target.y) !== undefined){break;}}
-    }//end rook
-
-  else if (o['piece']=='queen'){
-    for (var i = 1, j = 1; i<8-target.x, j<8-target.y; i++, j++){
-      if (o['x'] == target.x + i && o['y'] == target.y + j){
-        threats.push(o);break;}
-      else if (pieces.find(p => p['x'] == target.x + i
-      && p['y'] == target.y + j) !== undefined){break;}}
-    for (var i = 1, j = -1; i<8-target.x, j>=-target.y; i++, j--){
-      if (o['x'] == target.x + i && o['y'] == target.y  + j){
-        threats.push(o);break;}
-      else if (pieces.find(p => p['x'] == target.x + i
-      && p['y'] == target.y + j) != undefined){break;}}
-    for (var i = -1, j = 1; i>=-target.x, j<8-target.y; i--, j++){
-      if (o['x'] == target.x + i && o['y'] == target.y + j){
-        threats.push(o);break;}
-      else if (pieces.find(p => p['x'] == target.x + i
-      && p['y'] == target.y + j) !== undefined){break;}}
-    for (var i = -1, j=-1; i>=-target.x, j>=-target.y; i--, j--){
-      if (o['x'] == target.x + i && o['y'] == target.y + j){
-        threats.push(o);break;}
-      else if (pieces.find(p => p['x']==target.x + i
-      && p['y'] == target.y + j) !== undefined){break;}}
-    for (var j=1; j<8-target.y; j++){
-      if (o['x'] == target.x && o['y'] == target.y + j){
-        threats.push(o);break;}
-      else if (pieces.find(p => p['x'] == target.x
-      && p['y'] == target.y + j) !== undefined){break;}}
-    for (var j=-1; j>=-target.y; j--){
-      if (o['x'] == target.x && o['y'] == target.y + j){
-        threats.push(o);break;}
-      else if (pieces.find(p => p['x'] == target.x
-      && p['y'] == target.y + j)!== undefined){break;}}
-    for (var j=1; j<8-target.x; j++){
-      if (o['x'] == target.x + j && o['y'] == target.y){
-        threats.push(o);break;}
-        else if (pieces.find(p => p['x'] == target.x + j
-        && p['y'] == target.y) !== undefined){break;}}
-    for (var j=-1; j>=-target.x; j--){
-      if (o['x'] == target.x + j && o['y'] == target.y){
-        threats.push(o);break;}
-      else if (pieces.find(p => p['x'] == target.x + j
-      && p['y'] == target.y) !== undefined){break;}}
-    }//end queen
-
-    if (o['piece']=='king'){
-      if (o['x']+1 == target.x && o['y']+1 == target.y){threats.push(o)}
-      if (o['x']-1 == target.x && o['y']+1 == target.y){threats.push(o)}
-      if (o['x']+1 == target.x && o['y']-1 == target.y){threats.push(o)}
-      if (o['x']-1 == target.x && o['y']-1 == target.y){threats.push(o)}
-      if (o['x']+1 == target.x && o['y'] == target.y){threats.push(o)}
-      if (o['x']-1 == target.x && o['y'] == target.y){threats.push(o)}
-      if (o['x'] == target.x && o['y']+1 == target.y){threats.push(o)}
-      if (o['x'] == target.x && o['y']-1 == target.y){threats.push(o)}
-    }//end king
-})//end opp.forEach
-
   return threats.length ? threats : false
-}//end findThreats
+}
 
 function isCheck(pieces, player){
   let ks = pieces.find(pec => pec.piece == 'king' && pec.owner == player)
