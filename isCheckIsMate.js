@@ -122,11 +122,8 @@ function rookMove(pieces, player, rook){
 }
 
 function queenMove(pieces, player, queen){
-  console.log( 'qween')
   let bMoves = bishopMove(pieces, player, queen)
-  console.log( " bMoves", bMoves)
   let rMoves = rookMove(pieces, player, queen)
-  console.log( " rMoves", rMoves)
   return [...bMoves, ...rMoves]
 }
 
