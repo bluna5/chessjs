@@ -5,7 +5,7 @@
     <link href='chessStyle.css' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <script src='./pieces.js'></script>
+    <script src='./piecesTEST.js'></script>
     <script src='./isCheckIsMate.js'></script>
     <script>
 
@@ -16,7 +16,9 @@
       function validateMove(move){
         let fPiece = pieces.find(p => p.x === move[0][0] && p.y === move[0][1])
         let sPiece = pieces.find(p => p.x === move[1][0] && p.y === move[1][1]) || {'x': move[1][0], 'y': move[1][1]}
-        let retVal = pieceToFunc[fPiece.piece](pieces, player, fPiece, true)
+
+        let retVal = pieceToFunc[fPiece.piece](pieces, player, fPiece,true)
+        console.log( "retVal ",retVal )
         if (retVal.find(a => a.join('') === sPiece.x+''+sPiece.y)){
           return true
         }
@@ -41,7 +43,7 @@
         }
         // second click
         else {
-      //    console.log( fCId,fCx, fCy, '::', piece.id, piece.x, piece.y)
+          console.log( fCId,fCx, fCy, '::', piece.id, piece.x, piece.y)
           if (validateMove([[fCx, fCy], [piece.x, piece.y]])){
             let origP = pieces.find(p => p.x === fCx && p.y === fCy) 
             let trgtP = pieces.findIndex(p => p.x === piece.x && p.y === piece.y)
@@ -57,9 +59,9 @@
             let tD = document.getElementById('turnDiv')
             tD.style.backgroundColor = (player ? 'black' : 'white')
           }
-          if(isCheck(pieces, player)){
-            
-          }
+//          if(isCheck(pieces, player)){
+//            console.log(player, 'check')
+//          }
           clearFirst()
         }
       }
@@ -126,7 +128,7 @@
           }
           else{
             divs[d].addEventListener('click', dragOnDrop, false)
-            divs[d].appendChild(coord)
+          //  divs[d].appendChild(coord)
             divs[d].x = dC%8
             divs[d].y = n -1
           }

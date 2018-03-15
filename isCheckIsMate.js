@@ -14,6 +14,7 @@ let threatCheck = {
   'queen': queenMove,
   'king': kingMove
 }
+
 function isMate(pieces, player){
   let possibles = []
   if (isCheck(pieces, player)){
@@ -25,20 +26,17 @@ function isMate(pieces, player){
   }
   return possibles
 }
+
 function isCheck(pieces, player){
-  let ks = pieces.find(pec => pec.piece === 'king' && pec.owner === player)
+  let ks = pieces.find(p => p.piece === 'king' && p.owner === player)
   let opp = pieces.filter(p => p.owner !== player)
   let threats = []
   opp.forEach(o =>{ 
     let pMoves = threatCheck[o.piece](pieces, player^1, o, false)
-    pMoves.length ? threats.push(...pMoves) : null
+    pMoves.length > 0 ? threats.push(...pMoves) : null
   })
-  for (t=0; t<threats.length; t++){
-    if (threats[t][0] === ks.x && threats[t][1] === ks.y){
-      return true
-    }
-  }
-  return false
+  threats = threats.filter(t => t[0] === ks.x && t[1] === ks.y)
+  return threats.length > 0 ? true : false
 }
 
 function checkCheck(pieces, piece, target){
@@ -158,47 +156,50 @@ function rookMove(pieces, player, rook, check){
   let dir = [-1,1]
   dir.forEach(dX =>{
     let rangeX = (dX === 1 ? 7 - rook.x : rook.x)
-    let rangeY = (dX === 1 ? 7 - rook.y : rook.y)
     for (let x=1; x<rangeX+1; x++){
-      let sq = pieces.find(p => p.x === rook.x + x*dX
-                             && p.y === rook.y)
-      let target = {'x': rook.x + x*dX, 'y': rook.y}
-      if (!sq){
-        if (!check || !checkCheck(pieces, rook, target, false)){
-          moves.push([rook.x + x*dX, rook.y])
+      let target = pieces.find(p => p.x === rook.x + x*dX
+                                 && p.y === rook.y)
+      let sq = {'x': rook.x + x*dX, 'y': rook.y}
+      if (!target){
+        if (!check || !checkCheck(pieces, rook, sq, false)){
+          moves.push([sq.x, sq.y])
         }
       }
-      else if (sq.owner !== player){
+      else if (target.owner !== player){
         if (!check || !checkCheck(pieces, rook, target, false)){
-          moves.push([rook.x + x*dX, rook.y])
+          moves.push([sq.x, sq.y])
           break
         }
+        else break
       }
-      else break
     }
+  })
+  dir.forEach(dY => {
+    let rangeY = (dY === 1 ? 7 - rook.y : rook.y)
     for (let y=1; y<rangeY+1; y++){
-      let sq = pieces.find(p => p.y === rook.y + y*dX
-                             && p.x === rook.x)
-      let target = {'x': rook.x, 'y': rook.y + y*dX}
-      if (!sq){
-        if (!check || !checkCheck(pieces, rook, target, false)){
-          moves.push([rook.x, rook.y + y*dX])
+      let target = pieces.find(p => p.y === rook.y + y*dY
+                                 && p.x === rook.x)
+      let sq = {'x': rook.x, 'y': rook.y + y*dY}
+      if (!target){
+        if (!check || !checkCheck(pieces, rook, sq, false)){
+          moves.push([sq.x, sq.y])
         }
       }
-      else if (sq.owner !== player){
+      else if (target.owner !== player){
         if (!check || !checkCheck(pieces, rook, target, false)){
-          moves.push([rook.x, rook.y + y*dX])
+          moves.push([target.x, target.y])
+          break
         }
+        else break
       }
-      else break
     }
   })
   return moves 
 }
 
 function queenMove(pieces, player, queen, check){
-  let bMoves = bishopMove(pieces, player, queen, check)
   let rMoves = rookMove(pieces, player, queen, check)
+  let bMoves = bishopMove(pieces, player, queen, check)
   return [...bMoves, ...rMoves]
 }
 
