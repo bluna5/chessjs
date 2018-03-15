@@ -5,7 +5,7 @@
     <link href='chessStyle.css' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <script src='./piecesTEST.js'></script>
+    <script src='./pieces.js'></script>
     <script src='./isCheckIsMate.js'></script>
     <script>
 
@@ -59,9 +59,12 @@
             let tD = document.getElementById('turnDiv')
             tD.style.backgroundColor = (player ? 'black' : 'white')
           }
-//          if(isCheck(pieces, player)){
-//            console.log(player, 'check')
-//          }
+          if(isCheck(pieces, player)){
+            console.log(player, 'check')
+            let possibles = isMate(pieces, player)
+            console.log( possibles)
+            possibles.length === 0 ? console.log( 'MATE!') : console.log( 'not mate')
+          }
           clearFirst()
         }
       }

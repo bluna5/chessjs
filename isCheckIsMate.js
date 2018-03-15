@@ -17,13 +17,11 @@ let threatCheck = {
 
 function isMate(pieces, player){
   let possibles = []
-  if (isCheck(pieces, player)){
-    let ownPieces = pieces.filter(p => p.owner === player)
-    ownPieces.forEach(p => {
-      let pMoves = pieceToFunc[p.piece](pieces, player, p, false)
-      pMoves.length > 0 ? possibles.push(...pMoves) : null
-    })
-  }
+  let ownPieces = pieces.filter(p => p.owner === player)
+  ownPieces.forEach(p => {
+    let pMoves = pieceToFunc[p.piece](pieces, player, p, true)
+    pMoves.length > 0 ? possibles.push(...pMoves) : null
+  })
   return possibles
 }
 
