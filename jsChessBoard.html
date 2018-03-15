@@ -60,10 +60,12 @@
             tD.style.backgroundColor = (player ? 'black' : 'white')
           }
           if(isCheck(pieces, player)){
-            console.log(player, 'check')
+            document.getElementById('checkDiv').innerHTML ='CHECK!'
             let possibles = isMate(pieces, player)
-            console.log( possibles)
-            possibles.length === 0 ? console.log( 'MATE!') : console.log( 'not mate')
+            possibles.length === 0 ? document.getElementById('checkDiv').innerHTML = 'MATE!' : null
+          }
+          else{
+            clearNode(document.getElementById('checkDiv'))
           }
           clearFirst()
         }
@@ -163,6 +165,7 @@
       }
       function makeCheckBox(){
         let checkDiv = document.createElement('div')
+        checkDiv.id = 'checkDiv' 
         document.getElementsByTagName('body')[0].appendChild(checkDiv)
       }
       // run startup scripts

@@ -168,8 +168,8 @@ function rookMove(pieces, player, rook, check){
           moves.push([sq.x, sq.y])
           break
         }
-        else break
       }
+      else break
     }
   })
   dir.forEach(dY => {
@@ -188,8 +188,8 @@ function rookMove(pieces, player, rook, check){
           moves.push([target.x, target.y])
           break
         }
-        else break
       }
+      else break
     }
   })
   return moves 
