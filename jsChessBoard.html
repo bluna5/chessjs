@@ -41,7 +41,7 @@
         }
         // second click
         else {
-          console.log( fCId,fCx, fCy, '::', piece.id, piece.x, piece.y)
+      //    console.log( fCId,fCx, fCy, '::', piece.id, piece.x, piece.y)
           if (validateMove([[fCx, fCy], [piece.x, piece.y]])){
             let origP = pieces.find(p => p.x === fCx && p.y === fCy) 
             let trgtP = pieces.findIndex(p => p.x === piece.x && p.y === piece.y)
@@ -57,10 +57,13 @@
             let tD = document.getElementById('turnDiv')
             tD.style.backgroundColor = (player ? 'black' : 'white')
           }
+          if(isCheck(pieces, player)){
+            
+          }
           clearFirst()
         }
       }
-
+      
     </script>
     <script>
       // globals
@@ -153,12 +156,16 @@
         turnDiv.appendChild(document.createTextNode('turn'))
         document.getElementsByTagName('body')[0].appendChild(turnDiv)
       }
-
+      function makeCheckBox(){
+        let checkDiv = document.createElement('div')
+        document.getElementsByTagName('body')[0].appendChild(checkDiv)
+      }
       // run startup scripts
       paintBoard()
       fillBoard(0)
       makeFlipBtn()
       makeTurnDiv()
+      makeCheckBox()
     
     </script>
 
