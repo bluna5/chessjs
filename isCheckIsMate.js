@@ -34,16 +34,17 @@ function isCheck(pieces, player){
     pMoves.length > 0 ? threats.push(...pMoves) : null
   })
   threats = threats.filter(t => t[0] === ks.x && t[1] === ks.y)
+  //console.log( threats)
   return threats.length > 0 ? true : false
 }
 
-function checkCheck(pieces, piece, target){
+function checkCheck(pieces, piece, trgt){
   let oP = {'x': piece.x, 'y': piece.y}
-  let tI = pieces.findIndex(p => p.x === target.x && p.y === target.y)
+  let tI = pieces.findIndex(p => p.x === trgt.x && p.y === trgt.y)
   let oTP
   tI > -1 ? oTP = pieces.splice(tI,1) : null
-  piece.x = target.x
-  piece.y = target.y
+  piece.x = trgt.x
+  piece.y = trgt.y
   let res = isCheck(pieces, piece.owner)
   piece.x = oP.x
   piece.y = oP.y
@@ -65,8 +66,8 @@ function pawnThreat(pieces, player, pawn, check){
   range.forEach(r => {
     if (pieces.find(p => 
       p.x === pawn.x + r && p.y === pawn.y + flip && p.owner !== player)){
-      let target = {'x': pawn.x+r, 'y': pawn.y+flip}
-      if (!check || !checkCheck(pieces, pawn, target)){ 
+      let trgt = {'x': pawn.x+r, 'y': pawn.y+flip}
+      if (!check || !checkCheck(pieces, pawn, trgt)){ 
         takes.push([pawn.x + r, pawn.y + flip])
       }
     }
@@ -82,15 +83,15 @@ function pawnMove(pieces, player, pawn, check){
   let moves = []
   let flip = (-player || 1);
   if (! pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip)){
-    let target = {'x': pawn.x, 'y': pawn.y + flip}
-    if (!check || !checkCheck(pieces, pawn, target)){
+    let trgt = {'x': pawn.x, 'y': pawn.y + flip}
+    if (!check || !checkCheck(pieces, pawn, trgt)){
         moves.push([pawn.x, (pawn.y + flip)])
       }
     }
   if (pawn.y === (7+flip)%7 
   && !pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip*2)){
-    let target = {'x': pawn.x, 'y': pawn.y + flip*2}
-    if (!check || !checkCheck(pieces, pawn, target)){
+    let trgt = {'x': pawn.x, 'y': pawn.y + flip*2}
+    if (!check || !checkCheck(pieces, pawn, trgt)){
       moves.push([pawn.x, pawn.y + flip*2])
     }
   }
@@ -107,8 +108,8 @@ function knightMove(pieces, player, knight, check){
           if (!pieces.find(p => p.x === knight.x+x[i] 
                              && p.y === knight.y+x[j] 
                              && p.owner === player)){
-          let target = {'x': knight.x+x[i], 'y': knight.y+x[j]}
-            if (!check || !checkCheck(pieces, knight, target, false)){
+          let trgt = {'x': knight.x+x[i], 'y': knight.y+x[j]}
+            if (!check || !checkCheck(pieces, knight, trgt, false)){
               moves.push([knight.x + x[i], knight.y + x[j]])
             }
           }
@@ -130,14 +131,14 @@ function bishopMove(pieces, player, bishop, check){
       for (let r=1; r<range+1; r++){
         let sq = pieces.find(p =>  p.x === bishop.x + (r*dX)
                                 && p.y === bishop.y + (r*dY))
-        let target = {'x': bishop.x + r*dX, 'y': bishop.y + r*dY}
+        let trgt = {'x': bishop.x + r*dX, 'y': bishop.y + r*dY}
         if(!sq){
-          if (!check || !checkCheck(pieces, bishop, target, false)){
+          if (!check || !checkCheck(pieces, bishop, trgt, false)){
             moves.push([(bishop.x + r*dX),(bishop.y + r*dY)])
           }
         }
         else if (sq.owner !== player){
-          if (!check || !checkCheck(pieces, bishop, target, false)){
+          if (!check || !checkCheck(pieces, bishop, trgt, false)){
             moves.push([sq.x, sq.y])
             break
           }
@@ -155,16 +156,16 @@ function rookMove(pieces, player, rook, check){
   dir.forEach(dX =>{
     let rangeX = (dX === 1 ? 7 - rook.x : rook.x)
     for (let x=1; x<rangeX+1; x++){
-      let target = pieces.find(p => p.x === rook.x + x*dX
+      let trgt = pieces.find(p => p.x === rook.x + x*dX
                                  && p.y === rook.y)
       let sq = {'x': rook.x + x*dX, 'y': rook.y}
-      if (!target){
+      if (!trgt){
         if (!check || !checkCheck(pieces, rook, sq, false)){
           moves.push([sq.x, sq.y])
         }
       }
-      else if (target.owner !== player){
-        if (!check || !checkCheck(pieces, rook, target, false)){
+      else if (trgt.owner !== player){
+        if (!check || !checkCheck(pieces, rook, trgt, false)){
           moves.push([sq.x, sq.y])
           break
         }
@@ -175,17 +176,17 @@ function rookMove(pieces, player, rook, check){
   dir.forEach(dY => {
     let rangeY = (dY === 1 ? 7 - rook.y : rook.y)
     for (let y=1; y<rangeY+1; y++){
-      let target = pieces.find(p => p.y === rook.y + y*dY
+      let trgt = pieces.find(p => p.y === rook.y + y*dY
                                  && p.x === rook.x)
       let sq = {'x': rook.x, 'y': rook.y + y*dY}
-      if (!target){
+      if (!trgt){
         if (!check || !checkCheck(pieces, rook, sq, false)){
           moves.push([sq.x, sq.y])
         }
       }
-      else if (target.owner !== player){
-        if (!check || !checkCheck(pieces, rook, target, false)){
-          moves.push([target.x, target.y])
+      else if (trgt.owner !== player){
+        if (!check || !checkCheck(pieces, rook, trgt, false)){
+          moves.push([trgt.x, trgt.y])
           break
         }
       }
@@ -211,13 +212,13 @@ function kingMove(pieces, player, king, check){
         let kY = king.y + y
         if (kX <= 7 && kX >= 0 && kY <= 7 && kY >= 0){
           let sq = pieces.find(p => p.x === kX && p.y === kY)
-          let target = {'x': kX, 'y': kY}
+          let trgt = {'x': kX, 'y': kY}
           if (!sq){
-            if (!check || !checkCheck(pieces, king, target, false))
+            if (!check || !checkCheck(pieces, king, trgt, false))
             moves.push([kX, kY])
           }
           else if (sq.owner !== player){
-            if (!check || !checkCheck(pieces, king, target, false))
+            if (!check || !checkCheck(pieces, king, trgt, false))
             moves.push([kX, kY])
           }
         }
@@ -225,4 +226,10 @@ function kingMove(pieces, player, king, check){
     })
   )
   return moves
+}
+module.exports = {
+  pieceToFunc: pieceToFunc,
+  isCheck: isCheck,
+  isMate: isMate
+  
 }
