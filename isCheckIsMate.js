@@ -1,3 +1,41 @@
+let getPossibles = function (pieceArr){
+  let fPiece = pieces.find(p => p.x == pieceArr[0][0] && p.y === pieceArr[0][1])
+  this.possibles = pieceToFunc[fPiece.piece](pieces, player, fPiece, true)
+  this.enP
+
+  this.validateMove = function (){
+    let sSquare = pieces.find(p => p.x === pieceArr[1][0] && p.y === pieceArr[1][1]) || {'x': pieceArr[1][0], 'y': pieceArr[1][1]}
+  let thisMove = this.possibles.find(p => p[0] === sSquare.x && p[1] === sSquare.y)
+  if (thisMove){
+    if (thisMove.length === 4){
+      this.enP = [thisMove[2], thisMove[3]]
+    }
+    else{
+      this.enP = null
+    }
+    return true
+  }
+    return false
+  }
+
+  this.makeMove = makeMove
+}
+
+let makeMove = function(square){
+  let origP = pieces.find(p => p.x === fCx && p.y === fCy) 
+  let trgtP = pieces.findIndex(p => p.x === square.x && p.y === square.y)
+  if (this.enP){
+    trgtP = pieces.findIndex(p => p.x === this.enP[0] && p.y === this.enP[1])
+  }
+  origP.prevY = fCy
+  origP.x = square.x
+  origP.y = square.y
+  // remove captured piece if exists
+  if (trgtP > -1){
+    pieces.splice(trgtP, 1)
+  }
+}
+
 let pieceToFunc = {
   'pawn': pawnMoveCheck,
   'knight': knightMove,
@@ -34,7 +72,6 @@ function isCheck(pieces, player){
     pMoves.length > 0 ? threats.push(...pMoves) : null
   })
   threats = threats.filter(t => t[0] === ks.x && t[1] === ks.y)
-  //console.log( threats)
   return threats.length > 0 ? true : false
 }
 
@@ -66,19 +103,26 @@ function pawnThreat(pieces, player, pawn, check){
   range.forEach(r => {
     if (pieces.find(p => 
       p.x === pawn.x + r && p.y === pawn.y + flip && p.owner !== player)){
-      let trgt = {'x': pawn.x+r, 'y': pawn.y+flip}
+      let trgt = {'x': pawn.x + r, 'y': pawn.y + flip}
       if (!check || !checkCheck(pieces, pawn, trgt)){ 
         takes.push([pawn.x + r, pawn.y + flip])
       }
     }
-    // en passant (needs move history to remove captured pawn from pieces)
-    if (pieces.find(p =>
-      p.x == pawn.x + r && p.y === (flip ? 4 : 3) && p.piece === 'pawn' && p.owner !== player)){
-      takes.push([pawn.x + r, pawn.y + flip])
+    // en passant
+    let enPassant = pieces.find(p =>
+      p.x === pawn.x + r 
+      && p.y === pawn.y
+      && p.piece === 'pawn' 
+      && p.owner !== player
+      && p.prevY === (flip === 1 ? 6 : 1)
+    )
+    if (enPassant){
+      takes.push([pawn.x + r, pawn.y + flip, pawn.x + r, pawn.y])
     }
   })
   return takes
 }
+
 function pawnMove(pieces, player, pawn, check){
   let moves = []
   let flip = (-player || 1);
@@ -86,13 +130,13 @@ function pawnMove(pieces, player, pawn, check){
     let trgt = {'x': pawn.x, 'y': pawn.y + flip}
     if (!check || !checkCheck(pieces, pawn, trgt)){
         moves.push([pawn.x, (pawn.y + flip)])
-      }
     }
-  if (pawn.y === (7+flip)%7 
-  && !pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip*2)){
-    let trgt = {'x': pawn.x, 'y': pawn.y + flip*2}
-    if (!check || !checkCheck(pieces, pawn, trgt)){
-      moves.push([pawn.x, pawn.y + flip*2])
+    if (pawn.y === (7+flip)%7 
+    && !pieces.find(p => p.x === pawn.x && p.y === pawn.y + flip*2)){
+      let trgt = {'x': pawn.x, 'y': pawn.y + flip*2}
+      if (!check || !checkCheck(pieces, pawn, trgt)){
+        moves.push([pawn.x, pawn.y + flip*2])
+      }
     }
   }
   return moves
@@ -227,9 +271,12 @@ function kingMove(pieces, player, king, check){
   )
   return moves
 }
-module.exports = {
-  pieceToFunc: pieceToFunc,
-  isCheck: isCheck,
-  isMate: isMate
-  
-}
+
+// exports
+//if (typeof window === undefined){
+  module.exports = {
+    pieceToFunc: pieceToFunc,
+    isCheck: isCheck,
+    isMate: isMate
+  }
+//}

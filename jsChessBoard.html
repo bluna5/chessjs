@@ -12,71 +12,57 @@
       // global player var
       let playerSide = 0
       let player = 0
-       
-      function validateMove(move){
-        let fPiece = pieces.find(p => p.x === move[0][0] && p.y === move[0][1])
-        let sPiece = pieces.find(p => p.x === move[1][0] && p.y === move[1][1]) || {'x': move[1][0], 'y': move[1][1]}
 
-        let retVal = pieceToFunc[fPiece.piece](pieces, player, fPiece,true)
-        console.log( "retVal ",retVal )
-        if (retVal.find(a => a.join('') === sPiece.x+''+sPiece.y)){
-          return true
-        }
-        return false
-      }
       // event handlers
       // global click vars
       let fCId = null 
       let fCx, fCy = null
-      let fClick = null
-      let clearFirst = () => {fCId = fCx = fCy = fClick = null}
+      let fP = null
+      let clearFirst = () => {fCId = fCx = fCy = fP = null}
+
       function dragOnDrop(elem){
-        let piece = pieces.find(p => p.x === elem.target.x && p.y === elem.target.y) || {'x': elem.target.x, 'y': elem.target.y}
-        // firstClick
+        let square = pieces.find(p => p.x === elem.target.x && p.y === elem.target.y) || {'x': elem.target.x, 'y': elem.target.y}
+
+        // first click must be own piece
         if (!fCId){
-          if (piece.piece && piece.owner === player){
+          if (square.piece && square.owner === player){
             fCId = elem.target.id
-            fCx = elem.target.x
-            fCy = elem.target.y
-            fClick = piece
+            fCx = square.x
+            fCy = square.y
+            fP = square
+            let possibles = new getPossibles([[fCx, fCy]]).possibles
+            // highlight valid moves function Here
           }
         }
+        
         // second click
         else {
-          console.log( fCId,fCx, fCy, '::', piece.id, piece.x, piece.y)
-          if (validateMove([[fCx, fCy], [piece.x, piece.y]])){
-            let origP = pieces.find(p => p.x === fCx && p.y === fCy) 
-            let trgtP = pieces.findIndex(p => p.x === piece.x && p.y === piece.y)
-            origP.x = piece.x
-            origP.y = piece.y
-            // remove captured piece if exists
-            if (trgtP > -1){
-              pieces.splice(trgtP, 1)
-            }
+          let validator = new getPossibles([[fCx, fCy], [square.x, square.y]])
+          if (validator.validateMove()){
+            validator.makeMove(square)
+
             // switch player
             player = player^1
             fillBoard(playerSide)
             let tD = document.getElementById('turnDiv')
             tD.style.backgroundColor = (player ? 'black' : 'white')
+
+            // display check/mate
+            if(isCheck(pieces, player)){
+              let endCheckPossibles = isMate(pieces, player)
+              console.log( endCheckPossibles)
+              document.getElementById('checkDiv').innerHTML = (endCheckPossibles.length === 0 ? 'MATE!' : 'CHECK!')
+            }
+            else{
+              clearNode(document.getElementById('checkDiv'))
+            }  
+            clearFirst()
           }
-          if(isCheck(pieces, player)){
-            document.getElementById('checkDiv').innerHTML ='CHECK!'
-            let possibles = isMate(pieces, player)
-            possibles.length === 0 ? document.getElementById('checkDiv').innerHTML = 'MATE!' : null
-          }
-          else{
-            clearNode(document.getElementById('checkDiv'))
-          }
-          clearFirst()
         }
       }
       
     </script>
     <script>
-      // globals
-      let currPlayer = 0
-      // end globals
-      
       let boardDiv = document.createElement('div')
       boardDiv.className = 'board'
       boardDiv.id = 'board'
@@ -120,7 +106,7 @@
           let id = a + n
           let coord = document.createTextNode(id)
           divs[d].id = id
-          let piece = pieces.find(p => p.x===dC%8 && p.y===n-1) || null
+          let piece = pieces.find(p => p.x === dC%8 && p.y === n-1) || null
           if (piece){
             piece.id = id
             let pChar = document.createElement('p')
@@ -131,11 +117,12 @@
             divs[d].addEventListener('click', dragOnDrop, false)
             divs[d].appendChild(pChar)
           }
+
           else{
             divs[d].addEventListener('click', dragOnDrop, false)
           //  divs[d].appendChild(coord)
             divs[d].x = dC%8
-            divs[d].y = n -1
+            divs[d].y = n - 1
           }
         }
       }
@@ -146,6 +133,7 @@
         startBtn.id = 'startBtn'
         // import player fillBoard('player')
       }
+
       function makeFlipBtn(){
         let flipBtn = document.createElement('button')
         flipBtn.id = 'flipBtn' 
@@ -153,21 +141,25 @@
         document.getElementsByTagName('body')[0].appendChild(flipBtn)
         flipBtn.addEventListener('click', flipBoard, false)
       }
+
       function flipBoard(event){
         playerSide = playerSide^1
         fillBoard(playerSide)
       }
+
       function makeTurnDiv(){
         let turnDiv = document.createElement('div')
         turnDiv.id = 'turnDiv'
         turnDiv.appendChild(document.createTextNode('turn'))
         document.getElementsByTagName('body')[0].appendChild(turnDiv)
       }
+
       function makeCheckBox(){
         let checkDiv = document.createElement('div')
         checkDiv.id = 'checkDiv' 
         document.getElementsByTagName('body')[0].appendChild(checkDiv)
       }
+
       // run startup scripts
       paintBoard()
       fillBoard(0)
