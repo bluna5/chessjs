@@ -14,6 +14,16 @@ let threatCheck = {
   'queen': queenMove,
   'king': kingMove
 }
+let numberToLetter = {
+  '0': 'h',
+  '1': 'g',
+  '2': 'f',
+  '3': 'e',
+  '4': 'd',
+  '5': 'c',
+  '6': 'b',
+  '7': 'a',
+}
 
 function isMate(pieces, player){
   let possibles = []
@@ -26,8 +36,8 @@ function isMate(pieces, player){
 }
 
 function isCheck(pieces, player){
-  let ks = pieces.find(p => p.piece === 'king' && p.owner === player)
-  let opp = pieces.filter(p => p.owner !== player)
+  let ks = pieces.find(p => p.piece === 'king' && p.owner === player) //where the kings are?
+  let opp = pieces.filter(p => p.owner !== player) //all of the players peices
   let threats = []
   opp.forEach(o =>{ 
     let pMoves = threatCheck[o.piece](pieces, player^1, o, false)
@@ -39,7 +49,7 @@ function isCheck(pieces, player){
 }
 
 function checkCheck(pieces, piece, trgt){
-  let oP = {'x': piece.x, 'y': piece.y}
+  let oP = {'x': piece.x, 'y': piece.y} //place of peice
   let tI = pieces.findIndex(p => p.x === trgt.x && p.y === trgt.y)
   let oTP
   tI > -1 ? oTP = pieces.splice(tI,1) : null
@@ -56,6 +66,7 @@ function checkCheck(pieces, piece, trgt){
 
 function pawnMoveCheck(pieces, player, pawn, check){
   let moves = pawnMove(pieces, player, pawn, check)
+  // console.log(moves)
   let takes = pawnThreat(pieces, player, pawn, check)
   return [...moves, ...takes]
 }
@@ -227,9 +238,9 @@ function kingMove(pieces, player, king, check){
   )
   return moves
 }
-module.exports = {
-  pieceToFunc: pieceToFunc,
-  isCheck: isCheck,
-  isMate: isMate
+// modules.exports = {
+//   pieceToFunc: pieceToFunc,
+//   isCheck: isCheck,
+//   isMate: isMate
   
-}
+// }

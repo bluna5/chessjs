@@ -39,12 +39,17 @@
             fCx = elem.target.x
             fCy = elem.target.y
             fClick = piece
+            let possibleMoves = pieceToFunc[piece.piece](pieces,player,piece,true); //get where that piece can be placed
+            possibleMoves.forEach(element => {
+              let index = numberToLetter[element[0]] + "" + (element[1] + 1);
+              document.getElementById(index).style.backgroundColor = "#F0F0F0";
+            });
           }
         }
         // second click
         else {
-          console.log( fCId,fCx, fCy, '::', piece.id, piece.x, piece.y)
           if (validateMove([[fCx, fCy], [piece.x, piece.y]])){
+            console.log( fCId,fCx, fCy, '::', piece.id, piece.x, piece.y)
             let origP = pieces.find(p => p.x === fCx && p.y === fCy) 
             let trgtP = pieces.findIndex(p => p.x === piece.x && p.y === piece.y)
             origP.x = piece.x
@@ -55,6 +60,7 @@
             }
             // switch player
             player = player^1
+            paintBoard();
             fillBoard(playerSide)
             let tD = document.getElementById('turnDiv')
             tD.style.backgroundColor = (player ? 'black' : 'white')
@@ -63,11 +69,15 @@
             document.getElementById('checkDiv').innerHTML ='CHECK!'
             let possibles = isMate(pieces, player)
             possibles.length === 0 ? document.getElementById('checkDiv').innerHTML = 'MATE!' : null
+            paintBoard();
           }
           else{
+            // console.log("drop")
             clearNode(document.getElementById('checkDiv'))
           }
           clearFirst()
+          paintBoard();
+          fillBoard(0);
         }
       }
       
@@ -85,6 +95,7 @@
       // build empty board
       // div buffer
       function paintBoard(){
+        document.getElementById('board').innerHTML = '';
         let boardFrag = document.createDocumentFragment()
         for (let row=0; row<8; row++){
           let rowDiv = document.createElement('div')
