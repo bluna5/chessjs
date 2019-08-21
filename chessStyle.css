@@ -3,7 +3,7 @@
   --width:60px;
 }
 div{
-  display: inline:block;
+  display: block;
   margin: 0px;
   border: none;
   padding: 0px;
@@ -14,7 +14,7 @@ div{
   border:solid 1px;
 }
 div.rowDiv{
-  display: inline:block;
+  display: block;
   margin: 0px;
   border: none;
   padding: 0px;
@@ -30,6 +30,8 @@ div.tileDiv{
   margin:0px 0px;
   padding:0px;
   font-size:3em;
+  cursor: pointer;
+  user-select: none;
 }
 .piece{
   padding:0px;
