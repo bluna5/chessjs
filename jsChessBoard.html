@@ -53,12 +53,22 @@
             if (trgtP > -1){
               pieces.splice(trgtP, 1)
             }
+            //Add pawn switch function
+            if(origP.piece == "pawn" && (origP.y == 7 || origP.y == 0)){
+              origP.piece = "queen";
+              if(origP.owner == 0){
+                origP.char = "♕";
+              }else{
+                origP.char = "♛";
+              }
+            }
             // switch player
             player = player^1
             fillBoard(playerSide)
             let tD = document.getElementById('turnDiv')
             tD.style.backgroundColor = (player ? 'black' : 'white')
           }
+          
           if(isCheck(pieces, player)){
             document.getElementById('checkDiv').innerHTML ='CHECK!'
             let possibles = isMate(pieces, player)
@@ -67,10 +77,9 @@
           else{
             clearNode(document.getElementById('checkDiv'))
           }
-          clearFirst()
+          clearFirst();
         }
       }
-      
     </script>
     <script>
       // globals
