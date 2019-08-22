@@ -44,7 +44,7 @@ function isCheck(pieces, player){
     pMoves.length > 0 ? threats.push(...pMoves) : null
   })
   threats = threats.filter(t => t[0] === ks.x && t[1] === ks.y)
-  //console.log( threats)
+  // console.log( threats)
   return threats.length > 0 ? true : false
 }
 
