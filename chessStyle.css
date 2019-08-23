@@ -1,18 +1,33 @@
+body{
+  margin: auto;
+  width: 50%;
+  background-color: rgb(5, 51, 51);
+  text-align: center;
+}
+
 :root{
   --height:60px;
   --width:60px;
 }
+
 div{
   display: block;
   margin: 0px;
   border: none;
   padding: 0px;
 }
+
 #turnDiv{
   display: inline-block;
-  background-color: 'FFFFFF';
-  border:solid 1px;
+  background-color: white;
+  width:100px;
+  height:70px;
+  font-size: 50px;
+  color: red;
+  border-radius: 50%;
+  user-select: none;
 }
+
 div.rowDiv{
   display: block;
   margin: 0px;
@@ -20,6 +35,7 @@ div.rowDiv{
   padding: 0px;
   height: var(--height);
 }
+
 div.tileDiv{
   display: inline-block;
   vertical-align:top;
@@ -33,6 +49,7 @@ div.tileDiv{
   cursor: pointer;
   user-select: none;
 }
+
 .piece{
   padding:0px;
   margin:0px;
@@ -41,6 +58,13 @@ div.tileDiv{
   text-align:center;
 
 }
+
 #flipBtn{
   display: inline-block;
+  width:100px;
+  height:70px;
+  font-size: 50px;
+  margin: 10px;
+  border-radius: 50%;
+  cursor: pointer;
 }
