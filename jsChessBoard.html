@@ -78,7 +78,7 @@
           if(isCheck(pieces, player)){
             document.getElementById('checkDiv').innerHTML ='CHECK!'
             let possibles = isMate(pieces, player)
-            possibles.length === 0 ? document.getElementById('checkDiv').innerHTML = 'MATE!' : null
+            possibles.length === 0 ? document.getElementById('checkDiv').innerHTML = 'CHECK MATE!' : null
             paintBoard();
           }
           else{

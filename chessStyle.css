@@ -68,3 +68,7 @@ div.tileDiv{
   border-radius: 50%;
   cursor: pointer;
 }
+
+#checkDiv {
+  color: white;
+}
