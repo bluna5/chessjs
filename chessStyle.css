@@ -19,8 +19,13 @@ div{
 
 #turnDiv{
   display: inline-block;
-  background-color: 'FFFFFF';
-  border:solid 1px;
+  background-color: white;
+  width:100px;
+  height:70px;
+  font-size: 50px;
+  color: red;
+  border-radius: 50%;
+  user-select: none;
 }
 
 div.rowDiv{
@@ -56,4 +61,10 @@ div.tileDiv{
 
 #flipBtn{
   display: inline-block;
+  width:100px;
+  height:70px;
+  font-size: 50px;
+  margin: 10px;
+  border-radius: 50%;
+  cursor: pointer;
 }
