@@ -1,25 +1,36 @@
+body{
+  margin: auto;
+  width: 50%;
+  background-color: rgb(5, 51, 51);
+  text-align: center;
+}
+
 :root{
   --height:60px;
   --width:60px;
 }
+
 div{
-  display: inline:block;
+  display: block;
   margin: 0px;
   border: none;
   padding: 0px;
 }
+
 #turnDiv{
   display: inline-block;
   background-color: 'FFFFFF';
   border:solid 1px;
 }
+
 div.rowDiv{
-  display: inline:block;
+  display: block;
   margin: 0px;
   border: none;
   padding: 0px;
   height: var(--height);
 }
+
 div.tileDiv{
   display: inline-block;
   vertical-align:top;
@@ -30,7 +41,10 @@ div.tileDiv{
   margin:0px 0px;
   padding:0px;
   font-size:3em;
+  cursor: pointer;
+  user-select: none;
 }
+
 .piece{
   padding:0px;
   margin:0px;
@@ -39,6 +53,7 @@ div.tileDiv{
   text-align:center;
 
 }
+
 #flipBtn{
   display: inline-block;
 }
